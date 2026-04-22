@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala nombre </title>
+    <link rel="stylesheet" href="../main.css">
+
+</head>
+
+<body>
+    <main class="contenedor centrarPagina" id="entrada">
+        <!-- La clase sala representa la sala principal y se encarda de cargar el fondo de la sala-->
+         <div class="tituloSala ">
+                <h1 class="fuenteTitulo" id="nombreSala"></h1>
+                <p class="fuenteParrafo" id="descripcionSala"></p>
+            </div>
+        <section class="fondoSala fondoSalaEntrada salaEntrada">
+            <section class="heroe">
+                <picture>
+                    <source srcset="../img/heroe.png" type="image/png">
+                    <img src="../img/heroe.png" alt="Imagen-del-heroe" class="imagenHeroe">
+                </picture>
+            </section>
+
+        </section>
+
+        <section class="areaUI">
+                <div class="consolaDeComandos">
+                    <label>Introduzca Acción</label>
+                    <br>
+                    <input type="text" id="comando" placeholder="Introduzca comando">
+                </div>
+                <div class="historialCombate">
+                    <h3>Historial de combate</h3>
+                    <div id="historial">
+                        <p>Historial de comandos</p>
+                    </div>
+                    <br>
+                </div>
+                <div class="acciones">
+                    <div class="buscar">
+                        <button class="boton-azul">Buscar</button>
+                    </div>
+                    <div class="pocion">
+                        <button class="boton-azul">Poción</button>
+                    </div>
+                    <div class="ayuda">
+                        <button class="boton-azul ">Ayuda</button>
+                    </div>
+                    <div class="comprar">
+                        <button class="boton-verde ">Comprar</button>
+                    </div>
+                </div>
+                <div class="menu">
+                    <button class="boton-azul ">Menu</button>
+                    <button class="boton-verde ">Guardar Partida</button>
+                    <button class="boton-amarillo ">Cargar Partida</button>
+                </div>
+                <div class="botones-acciones">
+                    <button id="btn-avanzar"><a href="salaSemiJefe.html">Avanzar</a></button>
+                    <button id="btn-abandonar">Abandonar cueva</button>
+                </div>
+            </section>
+    </main>
+
+
+
+    <!--Como -->
+    <script type="module" src="../app.js"></script>
+</body>
+
+</html>

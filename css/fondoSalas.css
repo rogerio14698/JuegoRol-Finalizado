@@ -1,0 +1,36 @@
+
+
+/*Definir el fondo de cada sala*/
+.salaEntrada{
+    background-image: url(/img/entrada.png);
+}
+
+.salaPasillo{
+    background-image: url(/img/pasillo.png);
+}
+
+.salaTienda{
+    background-image: url(/img/tienda.png);
+}
+
+.salaPerro{
+    background-image: url(/img/salaPerro.png);
+}
+
+.salaDemogorgon{
+    background-image: url(/img/salaDemogorgon.png);
+}
+
+.salaWarlock {
+    background-image: url(/img/salaWarlock.png);
+}
+.salaPuerta{
+    background-image: url(/img/pasillo.png);
+}
+.salaSemiJefe {
+    background-image: url(/img/salaSemiJefe.png);
+}
+.salaJefe{
+    background-image: url(/img/salaFinal.png);
+}
+

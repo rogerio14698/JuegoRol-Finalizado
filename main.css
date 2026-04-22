@@ -1,0 +1,11 @@
+@import 'css/normalize.css';
+@import 'css/variables.css';
+@import 'css/globales.css';
+@import 'css/fondoSalas.css';
+@import 'css/btn.css';
+
+
+/*Estilos para la interfaz de usuario */
+@import 'css/ui.css';
+@import 'css/consola.css';
+@import 'css/templateUi.css';

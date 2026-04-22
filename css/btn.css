@@ -1,0 +1,98 @@
+.boton {
+    --botonFondo: var(--colorPrimario);
+    --botonFondoHover: var(--colorPrimarioHover);
+    --botonFondoActivo: var(--colorPrimarioOscuro);
+    --botonTexto: var(--colorNeutro1);
+    --botonBorde: var(--colorPrimarioMuyOscuro);
+    --botonSombra: rgba(0, 0, 0, 0.25);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-width: 8.5rem;
+    padding: 0.7rem 1.1rem;
+    border: 2px solid var(--botonBorde);
+    border-radius: 0.6rem;
+    background: var(--botonFondo);
+    color: var(--botonTexto);
+    font: 700 1rem/1.1 "EB Garamond", serif;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    box-shadow: 0 5px 10px var(--botonSombra);
+    transition: background-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+}
+
+.boton:hover {
+    background: var(--botonFondoHover);
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px var(--botonSombra);
+}
+
+.boton:active {
+    background: var(--botonFondoActivo);
+    transform: translateY(0);
+    box-shadow: 0 3px 7px var(--botonSombra);
+}
+
+.boton:focus-visible {
+    outline: 3px solid var(--colorBorde);
+    outline-offset: 2px;
+}
+
+.boton:disabled,
+.boton[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.botonSecundario {
+    --botonFondo: var(--colorSecundario);
+    --botonFondoHover: var(--colorSecundarioTitulo);
+    --botonFondoActivo: #e06c24;
+    --botonTexto: var(--colorNeutro2);
+    --botonBorde: #b0531d;
+}
+
+.botonExito {
+    --botonFondo: var(--colorTerciario);
+    --botonFondoHover: var(--colorTerciarioHover);
+    --botonFondoActivo: var(--colorTerciarioOscuro);
+    --botonTexto: var(--colorNeutro2);
+    --botonBorde: #236623;
+}
+
+.botonInfo {
+    --botonFondo: var(--colorCuartenario);
+    --botonFondoHover: var(--colorCuartenarioHover);
+    --botonFondoActivo: #00007a;
+    --botonTexto: var(--colorNeutro1);
+    --botonBorde: #02024d;
+}
+
+.botonFantasma {
+    --botonFondo: transparent;
+    --botonFondoHover: var(--transparencia);
+    --botonFondoActivo: rgba(0, 0, 0, 0.7);
+    --botonTexto: var(--colorNeutro1);
+    --botonBorde: var(--colorNeutro1);
+    box-shadow: none;
+}
+
+.botonPequeno {
+    min-width: 6.6rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+.botonGrande {
+    min-width: 10rem;
+    padding: 0.95rem 1.3rem;
+    font-size: 1.1rem;
+}
+
+.botonCompleto {
+    width: 100%;
+}

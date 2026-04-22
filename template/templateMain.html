@@ -1,0 +1,32 @@
+<template>
+    <!-- La clase sala representa la sala principal y se encarda de cargar el fondo de la sala-->
+    <div class="tituloSala" id="tituloSala">
+        <h1 class="fuenteTitulo" id="nombreSala"></h1>
+        <p class="fuenteParrafo" id="descripcionSala"></p>
+    </div>
+    <section class="fondoSala">
+        <section class="heroe">
+            <picture>
+                <source srcset="../img/heroe.png" type="image/png">
+                <img src="../img/heroe.png" alt="Imagen-del-heroe" class="imagenHeroe" id="imgHeroe">
+            </picture>
+            <div class="atributos">
+                <h2 class="tituloNombre">Manuel</h2>
+                <p class="fuenteParrafo" id="vidaHeroe">Vida: </p>
+                <p class="fuenteParrafo" id="ataqueHeroe">Ataque: </p>
+                <p class="fuenteParrafo" id="defensaHeroe">Defensa: </p>
+                <p class="fuenteParrafo" id="oroHeroe">Oro: </p>
+            </div>
+        </section>
+        <section class="enemigo" id="seccionEnemigo" style="display: none;">
+            <picture>
+                <img src="" alt="Imagen-del-enemigo" class="imagenEnemigo" id="imgEnemigo">
+            </picture>
+            <div class="atributos">
+                <h2 class="tituloNombre"></h2>
+                <p class="fuenteParrafo" id="nombreEnemigo">Nombre: </p>
+                <p class="fuenteParrafo" id="vidaEnemigo">Vida: </p>
+            </div>
+        </section>
+    </section>
+</template>

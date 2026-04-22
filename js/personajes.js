@@ -1,0 +1,80 @@
+
+export const personajes = {
+    jugador: {
+        nombre: "Jugador",
+        salud: 100,
+        ataque: 10,
+        defensa: 5,
+        imagen: "../img/jugador.png",
+        nivel: 1,
+        experiencia: 0,
+        oro: 0,
+        inventario: [],
+    },
+    vendedor:{
+        id: "vendedor",
+        nombre: "Mercader Errante",
+        salud: 100,
+        ataque: 0,
+        inventario: ["Poción de salud: 20", "Espada de madera: 1", "Escudo de madera: 1"],
+        imagen: "../img/vendedor.png",  
+    },
+    monstruos: [
+        {
+            id: "demogorgon",
+            nombre: "Demogorgon",
+            salud: 150,
+            ataque: 20,
+            defensa: 10,
+            inventario: ["Bolsa de oro: 50", "Poción de salud: 20", "Alma de demonio: 1"],
+            imagen: "../img/demogorgon.png",
+        },
+        {
+            id: "perro-guardian",
+            nombre: "Perro Guardián",
+            salud: 80,
+            ataque: 15,
+            defensa: 5,
+            inventario: ["Bolsa de oro: 20", "Poción de salud: 10"],
+            imagen: "../img/perro.png",
+        },
+        {
+            id: "warlock",
+            nombre: "Warlock",
+            salud: 120,
+            ataque: 25,
+            defensa: 15,
+            inventario: ["Bolsa de oro: 30", "Poción de salud: 15", "Varita mágica: 1"],
+            imagen: "../img/warlock.png",
+        },
+        {
+            id: "bestia-warlock",
+            nombre: "Bestia Warlock",
+            salud: 200,
+            ataque: 30,
+            defensa: 20,
+            inventario: ["Bolsa de oro: 100", "Poción de salud: 50", "Varita mágica: 1", "Alma de demonio: 2"],
+            imagen: "../img/bestiaWarlock.png",
+        },
+        {
+            id: "elfo-magico",
+            nombre: "Elfo Mágico",
+            salud: 90,
+            ataque: 18,
+            defensa: 8,
+            inventario: ["Bolsa de oro: 25", "Poción de salud: 10", "Baston Arcano: 1"],
+            imagen: "../img/elfo.png",
+        },
+        {
+            id: "lilih",
+            nombre: "Lilih",
+            salud: 400,
+            ataque: 40,
+            defensa: 50,
+            inventario: ["Bolsa de oro: 700", "Poción de salud: 5", "Daga: 1"],
+            imagen: "../img/lilith.png",
+
+        }
+    ],
+    
+}
