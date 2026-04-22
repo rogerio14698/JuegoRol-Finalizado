@@ -3,15 +3,19 @@
 @import 'css/globales.css';
 @import 'css/fondoSalas.css';
 @import 'css/btn.css';
-/*Estilo paginas*/
-@import 'css/nav.css';
-@import 'css/tutorial.css';
 
-
-/*Estilos para la interfaz de usuario */
+/* Consola */
 @import 'css/ui.css';
 @import 'css/consola.css';
 @import 'css/templateUi.css';
+
+/*Estilo paginas*/
+@import 'css/nav.css';
+@import 'css/footer.css';
+@import 'css/tutorial.css';
+@import 'css/historial.css';
+@import 'css/cargarPartida.css';
+
 
 /*
    Esta regla va al final del archivo principal para que tenga prioridad

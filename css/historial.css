@@ -1,0 +1,41 @@
+
+/*Sobreescribimos el estilo de la consola, ya que lo llama por la id*/
+#historial {
+    min-height: none;
+    max-height: none;
+    overflow-y: none;
+    padding: none;
+    background: var(--colorNeutro6);
+    border:none;
+    border-radius: 0;
+}
+
+.historial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    height: 50vh;
+}
+
+
+.historial h1 {
+    color: var(--colorSecundarioTitulo);
+    margin-bottom: 20px;
+}
+.historial p {
+    color: var(--colorSecundarioParrafo);
+    font-size: 1.2em;
+    text-align: center;
+    max-width: 600px;
+}
+.historial a {
+    color: var(--colorSecundario);
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px;
+} 
+.historial a:hover {
+    color: var(--colorSecundarioHover);
+}
