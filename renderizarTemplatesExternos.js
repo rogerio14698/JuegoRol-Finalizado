@@ -3,6 +3,8 @@
 // Cada bloque visual tiene su propio archivo para mantener el HTML principal más limpio.
 const rutaTemplateNavegador = 'template/navegadorExterno.html';
 const rutaTemplateTutorial = 'template/tutorial.html';
+const rutaTemplateHistorial = 'template/historial.html';
+const rutaTemplateCargarPartida = 'template/cargarPartida.html';
 
 // Esta función recibe el id del contenedor donde se inyectará el template
 // y la ruta del archivo HTML externo que contiene la etiqueta <template>.
@@ -53,9 +55,11 @@ async function cargarTemplatesWeb(idTemplateWeb, rutaTemplateWeb) {
 function mostrarVista(vista) {
     const inicio = document.querySelector('.inicio');
     const tutorial = document.getElementById('tutorial');
+    const historial = document.getElementById('historial');
+    const cargarPartida = document.getElementById('cargarPartida');
 
     // Si falta alguno de los bloques visuales, salimos para evitar errores en tiempo de ejecución.
-    if (!inicio || !tutorial) {
+    if (!inicio || !tutorial || !historial || !cargarPartida) {
         return;
     }
 
@@ -63,6 +67,8 @@ function mostrarVista(vista) {
     if (vista === 'inicio') {
         inicio.hidden = false;
         tutorial.hidden = true;
+        historial.hidden = true;
+        cargarPartida.hidden = true;
         return;
     }
 
@@ -70,6 +76,23 @@ function mostrarVista(vista) {
     if (vista === 'tutorial') {
         inicio.hidden = true;
         tutorial.hidden = false;
+        historial.hidden = true;
+        cargarPartida.hidden = true;
+        return;
+    }
+    if (vista === 'historial') {
+        inicio.hidden = true;
+        tutorial.hidden = true;
+        historial.hidden = false;
+        cargarPartida.hidden = true;
+        return;
+    }
+    if (vista === 'cargarPartida') {
+        inicio.hidden = true;
+        tutorial.hidden = true;
+        historial.hidden = true;
+        cargarPartida.hidden = false;
+        return;
     }
 }
 
@@ -104,9 +127,11 @@ async function iniciarPantallaWeb() {
     try {
         const navegadorWeb = document.getElementById('navegadorPaginas');
         const tutorialTemplate = document.getElementById('tutorial');
+        const historialTemplate = document.getElementById('historial');
+        const cargarPartidaTemplate = document.getElementById('cargarPartida');
 
         // Si la página actual no tiene ninguno de los contenedores esperados, no continuamos.
-        if (!navegadorWeb && !tutorialTemplate) {
+        if (!navegadorWeb && !tutorialTemplate && !historialTemplate && !cargarPartidaTemplate) {
             return;
         }
 
@@ -118,6 +143,12 @@ async function iniciarPantallaWeb() {
         // El tutorial también se carga al inicio, pero se mantiene oculto hasta que el usuario lo pida.
         if (tutorialTemplate) {
             await cargarTemplatesWeb('tutorial', rutaTemplateTutorial);
+        }
+        if (historialTemplate) {
+            await cargarTemplatesWeb('historial', rutaTemplateHistorial);
+        }
+        if (cargarPartidaTemplate) {
+            await cargarTemplatesWeb('cargarPartida', rutaTemplateCargarPartida);
         }
 
         // La navegación debe configurarse después de renderizar el template del menú,

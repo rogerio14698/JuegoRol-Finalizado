@@ -3,9 +3,22 @@
 @import 'css/globales.css';
 @import 'css/fondoSalas.css';
 @import 'css/btn.css';
+/*Estilo paginas*/
+@import 'css/nav.css';
+@import 'css/tutorial.css';
 
 
 /*Estilos para la interfaz de usuario */
 @import 'css/ui.css';
 @import 'css/consola.css';
 @import 'css/templateUi.css';
+
+/*
+   Esta regla va al final del archivo principal para que tenga prioridad
+   sobre cualquier display definido antes en .inicio, .tutorial u otros bloques.
+   De esta forma, cuando JavaScript asigne element.hidden = true,
+   el navegador realmente ocultará el elemento aunque su clase use display:flex.
+*/
+[hidden] {
+	display: none !important;
+}
