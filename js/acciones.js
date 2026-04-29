@@ -128,7 +128,6 @@ function obtenerRutaSala(destinoId) {
 }
 
 //Funcion para actualizar el historial de movimientos del jugador
-//Esto aun no se renderiza en el html, ver como lo pongo
 function actualizarHistorial(mensaje) {
     const historial = document.getElementById('historial');
 
@@ -139,6 +138,15 @@ function actualizarHistorial(mensaje) {
     const linea = document.createElement('p');
     linea.textContent = mensaje;
     historial.prepend(linea);
+
+    // Persistimos cada entrada en localStorage para que la web la pueda leer
+    try {
+        const entradas = JSON.parse(localStorage.getItem('historialPartida') || '[]');
+        entradas.unshift(mensaje);
+        localStorage.setItem('historialPartida', JSON.stringify(entradas));
+    } catch (e) {
+        // localStorage no disponible; continuamos sin persistir
+    }
 }
 
 //Esto es un for muy reducido, que muestra todas las direcciones disponibles de la sala.

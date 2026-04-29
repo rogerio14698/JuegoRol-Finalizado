@@ -1,7 +1,19 @@
 <template id="historial">
-    <h1>Historial de combate</h1>
+    <section class="historialPanel">
+        <header class="historialHeader">
+            <div>
+                <h1>Historial de Partida</h1>
+                <p>Registro de comandos y eventos de tu ultima sesion de juego.</p>
+            </div>
+            <button class="historialBtnLimpiar" id="btnLimpiarHistorial" type="button">Limpiar historial</button>
+        </header>
 
-    <p>Aqui podrias ver el historial de combate de tu partida mas reciente:</p>
+        <div class="historialRegistro" id="listaHistorial">
+            <p class="historialVacio">Sin entradas registradas. Juega una partida para ver el historial aqui.</p>
+        </div>
 
-    <a href="../index.html">Volver al inicio</a>
+        <footer class="historialFooter">
+            <a class="historialBtn" href="index.html">Volver al inicio</a>
+        </footer>
+    </section>
 </template>

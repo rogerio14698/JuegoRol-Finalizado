@@ -118,6 +118,44 @@ function configurarBotonInicioWeb() {
 }
 
 // Este bloque escucha los clicks del menú y decide qué vista mostrar.
+// Lee el localStorage y vuelca las entradas en #listaHistorial.
+function cargarHistorialDesdeStorage() {
+    const lista = document.getElementById('listaHistorial');
+    if (!lista) return;
+
+    let entradas = [];
+    try {
+        entradas = JSON.parse(localStorage.getItem('historialPartida') || '[]');
+    } catch (e) {
+        entradas = [];
+    }
+
+    lista.innerHTML = '';
+
+    if (entradas.length === 0) {
+        const vacio = document.createElement('p');
+        vacio.className = 'historialVacio';
+        vacio.textContent = 'Sin entradas registradas. Juega una partida para ver el historial aqui.';
+        lista.appendChild(vacio);
+    } else {
+        entradas.forEach((texto) => {
+            const linea = document.createElement('p');
+            linea.textContent = texto;
+            lista.appendChild(linea);
+        });
+    }
+
+    // Boton limpiar: elimina el localStorage y recarga la vista vacia
+    const btnLimpiar = document.getElementById('btnLimpiarHistorial');
+    if (btnLimpiar) {
+        btnLimpiar.onclick = () => {
+            localStorage.removeItem('historialPartida');
+            cargarHistorialDesdeStorage();
+        };
+    }
+}
+
+// Este bloque escucha los clicks del menú y decide qué vista mostrar.
 // Se usa delegación de eventos porque los enlaces del navegador se insertan dinámicamente.
 function configurarNavegacionWeb() {
     const navegadorWeb = document.getElementById('navegadorPaginas');
@@ -140,6 +178,10 @@ function configurarNavegacionWeb() {
         const vista = enlace.dataset.vista;
         mostrarVista(vista);
         actualizarEnlaceActivo(vista);
+
+        if (vista === 'historial') {
+            cargarHistorialDesdeStorage();
+        }
     });
 }
 

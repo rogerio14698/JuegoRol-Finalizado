@@ -1,14 +1,86 @@
-.cargarPartiga {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    height: 50vh;
-    background-color: #f0f0f0;
-    margin-top: 20px;
+#cargarPartida {
+    padding: 34px 0 0;
+    color: var(--text);
 }
 
-.cargarPartiga h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
+#cargarPartida .cargarPartidaPanel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 26px;
+}
+
+#cargarPartida .cargarPartidaPanel h1 {
+    margin: 0 0 10px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+#cargarPartida .cargarPartidaPanel > p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+#cargarPartida .cargarPartidaGrid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+#cargarPartida .cargarCard {
+    background: rgba(8, 8, 12, 0.5);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#cargarPartida .cargarCard h2 {
+    margin: 0;
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+}
+
+#cargarPartida .cargarCard p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
+}
+
+#cargarPartida .cargarBtn {
+    align-self: flex-start;
+    margin-top: auto;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--colorSecundario);
+    color: var(--text);
+    padding: 10px 14px;
+    font-weight: 700;
+    font-family: 'EB Garamond', serif;
+    transition: background 0.2s ease;
+}
+
+#cargarPartida .cargarBtn:hover {
+    background: var(--colorSecundarioTitulo);
+}
+
+#cargarPartida .cargarCardDisabled {
+    opacity: 0.85;
+}
+
+#cargarPartida .cargarBtnMuted {
+    background: #444;
+    color: #ddd;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    #cargarPartida .cargarPartidaGrid {
+        grid-template-columns: 1fr;
+    }
 }

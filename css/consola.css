@@ -64,7 +64,7 @@
     font-size: 1rem;
 }
 
-#historial {
+.historialCombate #historial {
     min-height: 4rem;
     max-height: 5rem;
     overflow-y: auto;

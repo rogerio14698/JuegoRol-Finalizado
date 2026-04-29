@@ -1,7 +1,29 @@
 <template id="cargarPartida">
+    <section class="cargarPartidaPanel">
+        <h1>Gestion de Partidas</h1>
+        <p>
+            Elige como quieres continuar la aventura: entrar directo al juego o preparar
+            la carga de una partida guardada para futuras versiones.
+        </p>
 
-    <h1>Carga tu partida guardada aqui</h1>
+        <div class="cargarPartidaGrid">
+            <article class="cargarCard">
+                <h2>Entrar al juego</h2>
+                <p>
+                    Inicia el recorrido desde la entrada de la mazmorra y accede al sistema
+                    completo de movimiento, exploracion y combate.
+                </p>
+                <a class="cargarBtn" href="salas/entrada.html">Ir al juego</a>
+            </article>
 
-    <!--Ver como implemetnar esto: creo que por un Json-->
-
+            <article class="cargarCard cargarCardDisabled" aria-disabled="true">
+                <h2>Cargar partida guardada</h2>
+                <p>
+                    Esta seccion queda preparada para conectar tus datos guardados desde un
+                    JSON o almacenamiento local en una siguiente iteracion.
+                </p>
+                <button class="cargarBtn cargarBtnMuted" type="button" disabled>Proximamente</button>
+            </article>
+        </div>
+    </section>
 </template>
