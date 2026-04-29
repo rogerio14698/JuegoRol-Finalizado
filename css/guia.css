@@ -1,0 +1,128 @@
+#guia {
+    margin: 0 auto;
+    padding: 34px 0 0;
+    color: var(--guia-text);
+}
+
+#guia .intro {
+    background: var(--guia-panel);
+    border: 1px solid var(--guia-line);
+    box-shadow: var(--guia-shadow);
+    padding: 26px;
+    margin-bottom: 18px;
+}
+
+#guia .intro h1 {
+    margin: 0 0 10px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+#guia .intro p {
+    margin: 0;
+    color: var(--guia-muted);
+    line-height: 1.7;
+}
+
+#guia .grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#guia .cardGuia {
+    background: var(--guia-panel);
+    border: 1px solid var(--guia-line);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: var(--guia-shadow);
+    padding: 8px;
+}
+
+#guia .cardGuia img {
+    width: 300px;
+    height: auto;
+    margin: 0 auto;
+    box-shadow: 1px 1px 8px rgba(255, 255, 255, 0.738);
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--guia-line);
+}
+
+#guia .cardBody {
+    padding: 18px;
+}
+
+#guia .card h2 {
+    margin: 0 0 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+}
+
+#guia .cardGuia p {
+    margin: 0;
+    color: var(--guia-muted);
+    line-height: 1.65;
+    font-size: 1rem;
+}
+
+#guia .guiaTienda {
+    margin-top: 16px;
+    background: var(--guia-panel);
+    border: 1px solid var(--guia-line);
+    border-radius: 16px;
+    box-shadow: var(--guia-shadow);
+    padding: 22px;
+}
+
+#guia .guiaTienda h2 {
+    margin: 0 0 10px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+}
+
+#guia .guiaTienda p {
+    margin: 0;
+    color: var(--guia-muted);
+    line-height: 1.7;
+}
+
+#guia .guiaTienda p + h2 {
+    margin-top: 18px;
+}
+
+#guia .commands {
+    margin-top: 16px;
+    background: var(--guia-panel);
+    border: 1px solid var(--guia-line);
+    border-radius: 5px;
+    padding: 20px;
+}
+
+#guia .commands h2 {
+    margin: 0 0 10px;
+    font-family: 'Cinzel', serif;
+}
+
+#guia .commands ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--guia-muted);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+#guia .commands li {
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    #guia .grid {
+        grid-template-columns: 1fr;
+    }
+
+    #guia .commands ul {
+        grid-template-columns: 1fr;
+    }
+}

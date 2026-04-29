@@ -1,40 +1,51 @@
-
 /* apply a natural box layout model to all elements, but allowing components to change */
 html {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
-*, *:before, *:after {
-  box-sizing: inherit;
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }
+
 a {
     text-decoration: none;
 }
 
-h1,h2,h3,h4,h5,h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
     margin: 0;
     padding: 0;
 }
 
 body {
-    font-family: var(--fuenteParrafo);
     background-color: var(--colorNeutro6);
-    color: var(--colorNeutro2);
+    background:
+        linear-gradient(120deg, rgba(8, 7, 10, 0.95), rgba(20, 10, 10, 0.9)),
+        url('../img/referencia3.jpeg') center / cover fixed no-repeat;
 }
 
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+}
 
-.centrarPagina{
+.texturaFondo {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 5px 5px;
 }
 
-.centrarPagina > *{
-    width: 100%;
-}
 
 .contenedor {
     width: 95%;
@@ -48,7 +59,8 @@ body {
     color: var(--colorSecundarioTitulo);
     margin-bottom: 20px;
 }
-.fuenteParrafo{
+
+.fuenteParrafo {
     font-size: 1.2em;
     color: var(--colorSecundarioParrafo);
 }

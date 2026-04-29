@@ -1,44 +1,60 @@
-
-
-:root{
+:root {
     /*Colores*/
-        /*Rojos*/
-        --colorPrimario: #da3636;
-        --colorPrimarioOscuro: #a82828;
+    /*Rojos*/
+    --colorPrimario: #da3636;
+    --colorPrimarioOscuro: #a82828;
 
-        --colorPrimarioHover: rgb(146, 3, 3);
-        --colorPrimarioMuyOscuro: #781f1f;
+    --colorPrimarioHover: rgb(146, 3, 3);
+    --colorPrimarioMuyOscuro: #781f1f;
 
-        --colorSecundario: rgb(255, 126, 51);
-        --colorSecundarioTitulo: #ff8c42;
-        --colorSecundarioParrafo: #ff8c42;
+    --colorSecundario: rgb(255, 126, 51);
+    --colorSecundarioTitulo: #ff8c42;
+    --colorSecundarioParrafo: #ff8c42;
 
-        --colorTerciario: yellowgreen;
-        --colorTerciarioHover: rgb(154, 255, 0);
-        --colorTerciarioOscuro: rgb(1, 70, 1);
+    --colorTerciario: yellowgreen;
+    --colorTerciarioHover: rgb(154, 255, 0);
+    --colorTerciarioOscuro: rgb(1, 70, 1);
 
-        --colorTerciarioTrasparencia: rgba(10, 148, 10, 0.63);
+    --colorTerciarioTrasparencia: rgba(10, 148, 10, 0.63);
 
-        --colorCuartenario: rgb(0, 0, 163);
-        --colorCuartenarioClaro: rgb(88, 88, 223);
-        --colorCuartenarioHover: rgb(0, 0, 255);
+    --colorCuartenario: rgb(0, 0, 163);
+    --colorCuartenarioClaro: rgb(88, 88, 223);
+    --colorCuartenarioHover: rgb(0, 0, 255);
 
-        --colorBorde: #045caf;
-        --colorHeroePrimario: #1f4e78;
+    --colorBorde: #045caf;
+    --colorHeroePrimario: #1f4e78;
+    --colorTexto: #f2eee6;
 
-        
-        --colorNeutro1: #fff;
-        --colorNeutro2: #3c0202;
-        --colorNeutro3: #ccc;
-        --colorNeutro4: #eee;
-        --colorNeutro5: #222;
-        --colorNeutro6: #2e2e2e;
-        --boxShadow: 0 4px 8px rgba(255, 255, 255, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    --bg: #0f0f12;
+    --panel: rgba(20, 20, 27, 0.82);
+    --text: #f2eee6;
+    --muted: #c7bdad;
+    --accent: #c69a5b;
+    --accent-2: #7b1e22;
+    --line: rgba(198, 154, 91, 0.35);
+    --shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 
-        --transparencia: rgba(0, 0, 0, 0.5);
+    --guia-bg: #0b0d12;
+    --guia-panel: rgba(16, 19, 28, 0.88);
+    --guia-text: #f4efe8;
+    --guia-muted: #c7bdad;
+    --guia-accent: #d6aa6a;
+    --guia-line: rgba(214, 170, 106, 0.32);
+    --guia-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 
-        
-        
+
+    --colorNeutro1: #fff;
+    --colorNeutro2: #3c0202;
+    --colorNeutro3: #ccc;
+    --colorNeutro4: #eee;
+    --colorNeutro5: #222;
+    --colorNeutro6: #2e2e2e;
+    --boxShadow: 0 4px 8px rgba(255, 255, 255, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+
+    --transparencia: rgba(0, 0, 0, 0.5);
+
+
+
 
 
 
@@ -47,6 +63,5 @@
     --fuenteParrafo: '"EB Garamond", serif;'
 
 
-    /*Tamaños*/
 
 }

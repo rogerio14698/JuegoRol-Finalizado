@@ -2,7 +2,8 @@
 // Rutas de los templates que se usarán dentro de index.html.
 // Cada bloque visual tiene su propio archivo para mantener el HTML principal más limpio.
 const rutaTemplateNavegador = 'template/navegadorExterno.html';
-const rutaTemplateTutorial = 'template/tutorial.html';
+const rutaTemplateHome = 'template/home.html';
+const rutaTemplateGuia = 'template/guia.html';
 const rutaTemplateHistorial = 'template/historial.html';
 const rutaTemplateCargarPartida = 'template/cargarPartida.html';
 
@@ -51,49 +52,69 @@ async function cargarTemplatesWeb(idTemplateWeb, rutaTemplateWeb) {
 }
 
 // Esta función controla qué bloque de la portada se ve en cada momento.
-// Por ahora sólo alterna entre la vista de inicio y la vista del tutorial.
+// Alterna entre home, tutorial, historial y cargar partida.
 function mostrarVista(vista) {
-    const inicio = document.querySelector('.inicio');
-    const tutorial = document.getElementById('tutorial');
+    const home = document.getElementById('home');
+    const guia = document.getElementById('guia');
     const historial = document.getElementById('historial');
     const cargarPartida = document.getElementById('cargarPartida');
 
     // Si falta alguno de los bloques visuales, salimos para evitar errores en tiempo de ejecución.
-    if (!inicio || !tutorial || !historial || !cargarPartida) {
+    if (!home || !guia || !historial || !cargarPartida) {
         return;
     }
 
     // La vista por defecto es la portada con el botón de empezar.
-    if (vista === 'inicio') {
-        inicio.hidden = false;
-        tutorial.hidden = true;
+    if (vista === 'home') {
+        home.hidden = false;
+        guia.hidden = true;
         historial.hidden = true;
         cargarPartida.hidden = true;
         return;
     }
 
     // Cuando el usuario abre el tutorial, escondemos la portada y mostramos ese contenido.
-    if (vista === 'tutorial') {
-        inicio.hidden = true;
-        tutorial.hidden = false;
+    if (vista === 'guia') {
+        home.hidden = true;
+        guia.hidden = false;
         historial.hidden = true;
         cargarPartida.hidden = true;
         return;
     }
     if (vista === 'historial') {
-        inicio.hidden = true;
-        tutorial.hidden = true;
+        home.hidden = true;
+        guia.hidden = true;
         historial.hidden = false;
         cargarPartida.hidden = true;
         return;
     }
     if (vista === 'cargarPartida') {
-        inicio.hidden = true;
-        tutorial.hidden = true;
+        home.hidden = true;
+        guia.hidden = true;
         historial.hidden = true;
         cargarPartida.hidden = false;
         return;
     }
+}
+
+function actualizarEnlaceActivo(vista) {
+    const enlacesVista = document.querySelectorAll('#navegadorPaginas a[data-vista]');
+
+    enlacesVista.forEach((enlace) => {
+        enlace.classList.toggle('active', enlace.dataset.vista === vista);
+    });
+}
+
+function configurarBotonInicioWeb() {
+    document.addEventListener('click', (evento) => {
+        const botonInicio = evento.target.closest('#btnInicio');
+
+        if (!botonInicio) {
+            return;
+        }
+
+        window.location.href = 'salas/entrada.html';
+    });
 }
 
 // Este bloque escucha los clicks del menú y decide qué vista mostrar.
@@ -118,6 +139,7 @@ function configurarNavegacionWeb() {
 
         const vista = enlace.dataset.vista;
         mostrarVista(vista);
+        actualizarEnlaceActivo(vista);
     });
 }
 
@@ -126,12 +148,13 @@ function configurarNavegacionWeb() {
 async function iniciarPantallaWeb() {
     try {
         const navegadorWeb = document.getElementById('navegadorPaginas');
-        const tutorialTemplate = document.getElementById('tutorial');
+        const homeTemplate = document.getElementById('home');
+        const guiaTemplate = document.getElementById('guia');
         const historialTemplate = document.getElementById('historial');
         const cargarPartidaTemplate = document.getElementById('cargarPartida');
 
         // Si la página actual no tiene ninguno de los contenedores esperados, no continuamos.
-        if (!navegadorWeb && !tutorialTemplate && !historialTemplate && !cargarPartidaTemplate) {
+        if (!navegadorWeb && !homeTemplate && !guiaTemplate && !historialTemplate && !cargarPartidaTemplate) {
             return;
         }
 
@@ -140,9 +163,13 @@ async function iniciarPantallaWeb() {
             await cargarTemplatesWeb('navegadorPaginas', rutaTemplateNavegador);
         }
 
+        if (homeTemplate) {
+            await cargarTemplatesWeb('home', rutaTemplateHome);
+        }
+
         // El tutorial también se carga al inicio, pero se mantiene oculto hasta que el usuario lo pida.
-        if (tutorialTemplate) {
-            await cargarTemplatesWeb('tutorial', rutaTemplateTutorial);
+        if (guiaTemplate) {
+            await cargarTemplatesWeb('guia', rutaTemplateGuia);
         }
         if (historialTemplate) {
             await cargarTemplatesWeb('historial', rutaTemplateHistorial);
@@ -154,9 +181,11 @@ async function iniciarPantallaWeb() {
         // La navegación debe configurarse después de renderizar el template del menú,
         // porque antes de eso los enlaces aún no existen dentro del DOM.
         configurarNavegacionWeb();
+        configurarBotonInicioWeb();
 
         // Dejamos visible sólo la portada al entrar en index.html.
-        mostrarVista('inicio');
+        mostrarVista('home');
+        actualizarEnlaceActivo('home');
 
         console.log('Sistema cargado: Navegador y Tutorial listos.');
     } catch (error) {

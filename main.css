@@ -2,7 +2,6 @@
 @import 'css/variables.css';
 @import 'css/globales.css';
 @import 'css/fondoSalas.css';
-@import 'css/btn.css';
 
 /* Consola */
 @import 'css/ui.css';
@@ -12,9 +11,9 @@
 /*Estilo paginas*/
 @import 'css/nav.css';
 @import 'css/footer.css';
-@import 'css/tutorial.css';
-@import 'css/historial.css';
-@import 'css/cargarPartida.css';
+@import 'css/home.css';
+@import 'css/guia.css';
+
 
 
 /*
