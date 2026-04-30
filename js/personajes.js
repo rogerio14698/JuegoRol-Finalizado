@@ -16,7 +16,11 @@ export const personajes = {
         nombre: "Mercader Errante",
         salud: 100,
         ataque: 0,
-        inventario: ["Poción de salud: 20", "Espada de madera: 1", "Escudo de madera: 1"],
+        inventario: [
+            { nombre: "Poción de salud", precio: 20, cantidad: 5 },
+            { nombre: "Espada de madera", precio: 1, cantidad: 1 },
+            { nombre: "Escudo de madera", precio: 1, cantidad: 1 }
+        ],
         imagen: "../img/vendedor.png",  
     },
     monstruos: [

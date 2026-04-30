@@ -127,16 +127,61 @@ function actualizarOroUI() {
     }
 }
 
-function parsearItemVendedor(itemTexto) {
-    const [nombreRaw, precioRaw] = itemTexto.split(':');
-    const nombre = (nombreRaw || '').trim();
-    const precio = Number.parseInt((precioRaw || '').trim(), 10);
+function actualizarInventarioUI() {
+    const inventarioHeroeEl = document.getElementById('inventarioHeroe');
+    if (!inventarioHeroeEl) {
+        return;
+    }
 
-    if (!nombre || Number.isNaN(precio) || precio <= 0) {
+    const inventario = personajes.jugador.inventario || [];
+    inventarioHeroeEl.innerHTML = '';
+
+    if (inventario.length === 0) {
+        const vacio = document.createElement('li');
+        vacio.className = 'inventarioVacio';
+        vacio.textContent = 'Sin objetos.';
+        inventarioHeroeEl.appendChild(vacio);
+        return;
+    }
+
+    const conteo = inventario.reduce((acumulado, item) => {
+        acumulado[item] = (acumulado[item] || 0) + 1;
+        return acumulado;
+    }, {});
+
+    Object.entries(conteo).forEach(([nombre, cantidad]) => {
+        const fila = document.createElement('li');
+        fila.textContent = cantidad > 1 ? `${nombre} x${cantidad}` : nombre;
+        inventarioHeroeEl.appendChild(fila);
+    });
+}
+
+function parsearItemVendedor(item) {
+    if (typeof item === 'string') {
+        const [nombreRaw, precioRaw] = item.split(':');
+        const nombre = (nombreRaw || '').trim();
+        const precio = Number.parseInt((precioRaw || '').trim(), 10);
+
+        if (!nombre || Number.isNaN(precio) || precio <= 0) {
+            return null;
+        }
+
+        return { nombre, precio, cantidad: 1 };
+    }
+
+    if (!item || typeof item !== 'object') {
         return null;
     }
 
-    return { nombre, precio };
+    const nombre = String(item.nombre || '').trim();
+    const precio = Number.parseInt(item.precio, 10);
+    const cantidad = Number.parseInt(item.cantidad, 10);
+
+    if (!nombre || Number.isNaN(precio) || precio <= 0 || Number.isNaN(cantidad) || cantidad < 0) {
+        return null;
+    }
+
+    return { nombre, precio, cantidad };
 }
 
 function cerrarPanelTienda() {
@@ -162,18 +207,22 @@ function renderizarPanelTienda() {
     }
 
     const items = personajes.vendedor.inventario
-        .map(parsearItemVendedor)
+        .map((item, indice) => {
+            const itemParseado = parsearItemVendedor(item);
+            return itemParseado ? { ...itemParseado, indice } : null;
+        })
         .filter(Boolean);
 
     const htmlItems = items.length === 0
         ? '<p class="fuenteParrafo">El mercader no tiene articulos disponibles.</p>'
         : items.map((item) => `
-            <article class="itemTienda">
+            <article class="itemTienda ${item.cantidad === 0 ? 'itemTiendaAgotado' : ''}">
                 <div>
                     <p class="itemTiendaNombre">${item.nombre}</p>
                     <p class="itemTiendaPrecio">${item.precio} de oro</p>
+                    <p class="fuenteParrafo">Stock: ${item.cantidad}</p>
                 </div>
-                <button class="boton-verde" data-item="${item.nombre}" data-precio="${item.precio}">Comprar</button>
+                <button class="boton-verde" data-indice="${item.indice}" ${item.cantidad === 0 ? 'disabled' : ''}>${item.cantidad === 0 ? 'Agotado' : 'Comprar'}</button>
             </article>
         `).join('');
 
@@ -193,13 +242,22 @@ function renderizarPanelTienda() {
         btnCerrar.addEventListener('click', cerrarPanelTienda);
     }
 
-    panel.querySelectorAll('button[data-item]').forEach((botonCompra) => {
+    panel.querySelectorAll('button[data-indice]').forEach((botonCompra) => {
         botonCompra.addEventListener('click', () => {
-            const nombreItem = botonCompra.dataset.item;
-            const precioItem = Number.parseInt(botonCompra.dataset.precio || '0', 10);
+            const indiceItem = Number.parseInt(botonCompra.dataset.indice || '-1', 10);
+            const itemOriginal = personajes.vendedor.inventario[indiceItem];
+            const itemActual = parsearItemVendedor(itemOriginal);
 
-            if (!nombreItem || Number.isNaN(precioItem) || precioItem <= 0) {
+            if (!itemActual) {
                 actualizarHistorial('No se pudo completar la compra del articulo seleccionado.');
+                return;
+            }
+
+            const nombreItem = itemActual.nombre;
+            const precioItem = itemActual.precio;
+
+            if (itemActual.cantidad <= 0) {
+                actualizarHistorial(`${nombreItem} esta agotado en la tienda.`);
                 return;
             }
 
@@ -210,8 +268,14 @@ function renderizarPanelTienda() {
 
             personajes.jugador.oro -= precioItem;
             personajes.jugador.inventario.push(nombreItem);
+
+            if (itemOriginal && typeof itemOriginal === 'object' && Number.isInteger(itemOriginal.cantidad)) {
+                itemOriginal.cantidad = Math.max(0, itemOriginal.cantidad - 1);
+            }
+
             actualizarOroUI();
-            actualizarHistorial(`Has comprado ${nombreItem} por ${precioItem} de oro.`);
+            actualizarInventarioUI();
+            actualizarHistorial(`Has comprado ${nombreItem} por ${precioItem} de oro. Stock restante: ${Math.max(0, itemActual.cantidad - 1)}.`);
             renderizarPanelTienda();
         });
     });
@@ -467,6 +531,7 @@ export function mostrarSala() {
     if (ataqueHeroeEl) ataqueHeroeEl.textContent = `Ataque: ${jugador.ataque}`;
     if (defensaHeroeEl) defensaHeroeEl.textContent = `Defensa: ${jugador.defensa}`;
     if (oroHeroeEl) oroHeroeEl.textContent = `Oro: ${jugador.oro}`;
+    actualizarInventarioUI();
 
 
 }
