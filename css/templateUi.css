@@ -12,6 +12,156 @@
 	z-index: 6;
 }
 
+.overlayCombateVector {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 11;
+	overflow: hidden;
+	opacity: 0;
+	mix-blend-mode: normal;
+}
+
+.overlayCombateVector .capaVigneta {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 32%, rgba(3, 4, 9, 0.68) 100%);
+	opacity: 0.12;
+}
+
+.overlayCombateVector .capaNiebla {
+	position: absolute;
+	inset: -8%;
+	background: radial-gradient(circle at 30% 70%, rgba(95, 13, 20, 0.3), transparent 50%),
+		radial-gradient(circle at 70% 35%, rgba(18, 42, 58, 0.24), transparent 45%);
+	filter: blur(10px);
+	opacity: 0.22;
+}
+
+.overlayCombateVector .capaFlashImpacto {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle at 58% 45%, rgba(240, 248, 255, 0.75) 0%, rgba(255, 255, 255, 0) 38%);
+	opacity: 0;
+	mix-blend-mode: screen;
+}
+
+.overlayCombateVector .capaRuido {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(rgba(255, 255, 255, 0.05) 0.6px, transparent 0.6px);
+	background-size: 3px 3px;
+	opacity: 0.08;
+	filter: contrast(1.25) brightness(0.8);
+}
+
+.overlayCombateVector .svgAtaque {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.overlayCombateVector .slashPrincipal,
+.overlayCombateVector .slashAfterImage,
+.overlayCombateVector .estelaSecundaria {
+	fill: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	opacity: 0;
+}
+
+.overlayCombateVector.temaBestia .slashPrincipal {
+	stroke: rgba(180, 24, 36, 0.98);
+	stroke-width: 12;
+	filter: drop-shadow(0 0 10px rgba(255, 42, 62, 0.62)) url(#fBlurTrazo);
+}
+
+.overlayCombateVector.temaBestia .slashAfterImage {
+	stroke: rgba(255, 154, 171, 0.48);
+	stroke-width: 8;
+	filter: drop-shadow(0 0 6px rgba(255, 90, 110, 0.45));
+}
+
+.overlayCombateVector.temaBestia .estelaSecundaria {
+	stroke: rgba(118, 22, 29, 0.82);
+	stroke-width: 5;
+	filter: blur(1px);
+}
+
+.overlayCombateVector.temaMagia .slashPrincipal {
+	stroke: rgba(82, 224, 255, 0.95);
+	stroke-width: 11;
+	filter: drop-shadow(0 0 13px rgba(90, 225, 255, 0.68)) url(#fBlurTrazo);
+}
+
+.overlayCombateVector.temaMagia .slashAfterImage {
+	stroke: rgba(191, 244, 255, 0.55);
+	stroke-width: 7;
+	filter: drop-shadow(0 0 8px rgba(151, 230, 255, 0.52));
+}
+
+.overlayCombateVector.temaMagia .estelaSecundaria {
+	stroke: rgba(35, 98, 123, 0.84);
+	stroke-width: 4;
+	filter: blur(1px);
+}
+
+.overlayCombateVector .particulaImpacto {
+	fill: rgba(238, 248, 255, 0.9);
+	filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.65));
+	opacity: 0;
+}
+
+.fondoSala.hitstopCombate {
+	filter: contrast(1.12) saturate(1.2);
+}
+
+.panelMapa {
+	position: absolute;
+	inset: 0.9rem;
+	background: rgba(8, 11, 18, 0.58);
+	backdrop-filter: blur(1px);
+	border: 1px solid rgba(255, 140, 66, 0.45);
+	border-radius: 0.75rem;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.42);
+	padding: 0.8rem;
+	z-index: 7;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+}
+
+.panelMapa[hidden] {
+	display: none;
+}
+
+.panelMapaCabecera {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.panelMapaCabecera h3 {
+	margin: 0;
+	color: var(--colorSecundarioTitulo);
+}
+
+.panelMapaContenido {
+	flex: 1;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 0.55rem;
+	overflow: hidden;
+	background: rgba(0, 0, 0, 0.22);
+}
+
+.imagenMapaMazmorra {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	display: block;
+}
+
 .panelTienda[hidden] {
 	display: none;
 }

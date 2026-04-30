@@ -1,5 +1,4 @@
 
-
 .inicio{
     display: flex;
     justify-content: center;
@@ -115,6 +114,43 @@
     font-size: 0.92rem;
 }
 
+.equipoPanelEnemigo {
+    margin-top: 0.35rem;
+    border-top: 1px solid rgba(236, 207, 194, 0.28);
+    padding-top: 0.45rem;
+}
+
+.equipoPanelEnemigo h3 {
+    margin: 0 0 0.35rem;
+    font-size: 0.9rem;
+    color: #eccfc2;
+    font-weight: 700;
+}
+
+#equipoEnemigo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.25rem;
+    max-height: 5.5rem;
+    overflow-y: auto;
+}
+
+#equipoEnemigo li {
+    font-size: 0.82rem;
+    color: #f1dfd7;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(236, 207, 194, 0.22);
+    border-radius: 0.35rem;
+    padding: 0.2rem 0.35rem;
+}
+
+#equipoEnemigo .equipoEnemigoVacio {
+    color: #c9b2a9;
+    border-style: dashed;
+}
+
 .inventarioPanelHeroe {
     margin-top: 0.35rem;
     border-top: 1px solid rgba(198, 154, 91, 0.3);
@@ -167,4 +203,65 @@
     justify-content: center;
     height: 100%;
     margin-left: 9rem;
+}
+
+.dialogoIntroCombate {
+    position: absolute;
+    left: 50%;
+    bottom: 1.25rem;
+    transform: translateX(-50%);
+    width: min(88%, 720px);
+    background: linear-gradient(180deg, rgba(8, 8, 14, 0.92), rgba(18, 5, 9, 0.9));
+    border: 1px solid rgba(255, 126, 51, 0.45);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.58), inset 0 0 28px rgba(160, 18, 18, 0.12);
+    border-radius: 0.7rem;
+    padding: 0.75rem 0.9rem;
+    z-index: 8;
+    animation: dialogoIntroEntrada 0.45s ease-out, dialogoIntroPulso 1.9s ease-in-out infinite;
+}
+
+.dialogoIntroCombate p {
+    margin: 0;
+    color: #efe4d2;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.75);
+}
+
+.dialogoIntroCombate.ocultar {
+    animation: dialogoIntroSalida 0.32s ease-in forwards;
+}
+
+@keyframes dialogoIntroEntrada {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes dialogoIntroPulso {
+    0% {
+        border-color: rgba(255, 126, 51, 0.35);
+    }
+    50% {
+        border-color: rgba(255, 126, 51, 0.62);
+    }
+    100% {
+        border-color: rgba(255, 126, 51, 0.35);
+    }
+}
+
+@keyframes dialogoIntroSalida {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
 }

@@ -1,5 +1,6 @@
-import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, mostrarSala } from './js/acciones.js';
+import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, configurarBotonMapa, configurarBotonPocion, mostrarSala } from './js/acciones.js';
 import { renderizarTemplate } from './js/cargarTemplates.js';
+import { inicializarAnimeJS } from './js/animacionesCombate.js';
 
 // 1. Lógica del botón de inicio ,no depende de los templates
 const btnInicio = document.getElementById("btnInicio");
@@ -34,6 +35,10 @@ async function iniciarPantalla() {
         configurarMovimientoPorComando();
         configurarBotonBuscar();
         configurarBotonComprar();
+        configurarBotonMapa();
+        configurarBotonPocion();
+
+        await inicializarAnimeJS();
 
         console.log("Sistema cargado: Sala y Consola listas.");
     } catch (error) {
