@@ -47,6 +47,15 @@ function normalizarComando(valor) {
     /*Estas funciones no las comento ya que las veo que son autoexplicativas */
 }
 
+function normalizarTextoConEspacios(valor) {
+    return valor
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ');
+}
+
 
 //Esta funcion recibe la sala que estamos y el comando normalizado
 function obtenerDestinoPorComando(sala, comandoNormalizado) {
@@ -127,11 +136,218 @@ function actualizarOroUI() {
     }
 }
 
+function actualizarAtributosHeroeUI() {
+    inicializarSistemaEquipamiento();
+
+    const jugador = personajes.jugador;
+    const base = jugador.atributosBase;
+    const arma = jugador.equipado?.arma;
+    const escudo = jugador.equipado?.escudo;
+
+    const bonusAtaque = arma?.ataque ?? 0;
+    const bonusFuerza = arma?.fuerza ?? 0;
+    const bonusDefensa = escudo?.defensa ?? 0;
+    const bonusVida = escudo?.vida ?? 0;
+
+    const nivelHeroeEl = document.getElementById("nivelHeroe");
+    const vidaHeroeEl = document.getElementById("vidaHeroe");
+    const ataqueHeroeEl = document.getElementById("ataqueHeroe");
+    const fuerzaHeroeEl = document.getElementById("fuerzaHeroe");
+    const defensaHeroeEl = document.getElementById("defensaHeroe");
+
+    if (nivelHeroeEl) nivelHeroeEl.textContent = `${jugador.nombre} | ${jugador.nivel}`;
+    if (vidaHeroeEl) vidaHeroeEl.textContent = `Vida: ${jugador.salud} + escudo Bonus ${bonusVida}`;
+    if (ataqueHeroeEl) ataqueHeroeEl.textContent = `Ataque: ${jugador.ataque} + arma Bonus ${bonusAtaque}`;
+    if (fuerzaHeroeEl) fuerzaHeroeEl.textContent = `Fuerza: ${jugador.fuerza} + arma Bonus ${bonusFuerza}`;
+    
+    if (defensaHeroeEl) defensaHeroeEl.textContent = `Defensa: ${jugador.defensa} + escudo Bonus ${bonusDefensa}`;
+
+    actualizarOroUI();
+}
+
+function obtenerSalaActualId() {
+    const parametrosURL = new URLSearchParams(window.location.search);
+    return parseInt(parametrosURL.get('id')) || idSalas.entrada;
+}
+
+function inicializarSistemaEquipamiento() {
+    if (!personajes.jugador.atributosBase) {
+        personajes.jugador.atributosBase = {
+            salud: personajes.jugador.salud,
+            ataque: personajes.jugador.ataque,
+            defensa: personajes.jugador.defensa,
+            fuerza: personajes.jugador.fuerza ?? 0,
+        };
+    }
+
+    if (!personajes.jugador.equipado) {
+        personajes.jugador.equipado = {
+            arma: null,
+            escudo: null,
+        };
+    }
+}
+
+function esItemEquipable(item) {
+    return !!item && typeof item === 'object' && (item.tipo === 'arma' || item.tipo === 'escudo');
+}
+
+function recalcularAtributosPorEquipo() {
+    inicializarSistemaEquipamiento();
+
+    const base = personajes.jugador.atributosBase;
+    const arma = personajes.jugador.equipado.arma;
+    const escudo = personajes.jugador.equipado.escudo;
+
+    personajes.jugador.ataque = base.ataque + (arma?.ataque ?? 0);
+    personajes.jugador.fuerza = base.fuerza + (arma?.fuerza ?? 0);
+    personajes.jugador.defensa = base.defensa + (escudo?.defensa ?? 0);
+
+    const saludConEquipo = base.salud + (escudo?.vida ?? 0);
+    personajes.jugador.salud = Math.max(1, saludConEquipo);
+}
+
+function obtenerPrecioVenta(item) {
+    return Math.max(1, Math.floor((item?.precio ?? 1) / 2));
+}
+
+function devolverItemAlMercader(item) {
+    const inventarioVendedor = personajes.vendedor.inventario;
+    const indiceExistente = inventarioVendedor.findIndex(
+        (itemVendedor) => itemVendedor.nombre === item.nombre && itemVendedor.tipo === item.tipo
+    );
+
+    if (indiceExistente >= 0) {
+        const actual = parsearItemVendedor(inventarioVendedor[indiceExistente]);
+        inventarioVendedor[indiceExistente].cantidad = (actual?.cantidad ?? 0) + 1;
+        return;
+    }
+
+    inventarioVendedor.push({
+        ...item,
+        cantidad: 1,
+    });
+}
+
+function equiparItemInventario(indiceItem) {
+    const inventario = personajes.jugador.inventario;
+    const item = inventario[indiceItem];
+
+    if (!esItemEquipable(item)) {
+        actualizarHistorial('Ese objeto no se puede equipar.');
+        return;
+    }
+
+    inicializarSistemaEquipamiento();
+    personajes.jugador.equipado[item.tipo] = item;
+    recalcularAtributosPorEquipo();
+    actualizarAtributosHeroeUI();
+    actualizarInventarioUI();
+    actualizarHistorial(`Has equipado ${item.nombre}.`);
+}
+
+function procesarComandoEquipar(comandoCrudo) {
+    const comando = normalizarTextoConEspacios(comandoCrudo);
+
+    if (!comando.startsWith('equipar ')) {
+        return false;
+    }
+
+    const nombreObjetivo = comando.replace(/^equipar\s+/, '').trim();
+    if (!nombreObjetivo) {
+        actualizarHistorial('Indica el nombre del equipo. Ejemplo: equipar espada de hierro');
+        return true;
+    }
+
+    const indiceItem = personajes.jugador.inventario.findIndex((item) => {
+        if (!esItemEquipable(item)) {
+            return false;
+        }
+        return normalizarTextoConEspacios(item.nombre) === nombreObjetivo;
+    });
+
+    if (indiceItem === -1) {
+        actualizarHistorial(`No tienes "${nombreObjetivo}" en tu inventario o no es equipable.`);
+        return true;
+    }
+
+    equiparItemInventario(indiceItem);
+    return true;
+}
+
+function procesarComandoVender(comandoCrudo) {
+    const comando = normalizarTextoConEspacios(comandoCrudo);
+
+    if (!comando.startsWith('vender ')) {
+        return false;
+    }
+
+    const nombreObjetivo = comando.replace(/^vender\s+/, '').trim();
+    if (!nombreObjetivo) {
+        actualizarHistorial('Indica el nombre del equipo. Ejemplo: vender espada de hierro');
+        return true;
+    }
+
+    const indiceItem = personajes.jugador.inventario.findIndex((item) => {
+        if (!esItemEquipable(item)) {
+            return false;
+        }
+        return normalizarTextoConEspacios(item.nombre) === nombreObjetivo;
+    });
+
+    if (indiceItem === -1) {
+        actualizarHistorial(`No tienes "${nombreObjetivo}" en tu inventario o no es equipable.`);
+        return true;
+    }
+
+    venderItemInventario(indiceItem);
+    return true;
+}
+
+function venderItemInventario(indiceItem) {
+    const salaId = obtenerSalaActualId();
+
+    if (salaId !== idSalas.tienda) {
+        actualizarHistorial('Solo puedes vender objetos cuando estes en la tienda.');
+        return;
+    }
+
+    const inventario = personajes.jugador.inventario;
+    const item = inventario[indiceItem];
+
+    if (!item || !esItemEquipable(item)) {
+        actualizarHistorial('Solo puedes vender equipamiento desde el inventario.');
+        return;
+    }
+
+    const precioVenta = obtenerPrecioVenta(item);
+
+    inicializarSistemaEquipamiento();
+    if (personajes.jugador.equipado[item.tipo] === item) {
+        personajes.jugador.equipado[item.tipo] = null;
+    }
+
+    inventario.splice(indiceItem, 1);
+    personajes.jugador.oro += precioVenta;
+    devolverItemAlMercader(item);
+    recalcularAtributosPorEquipo();
+    actualizarAtributosHeroeUI();
+    actualizarInventarioUI();
+    actualizarHistorial(`Has vendido ${item.nombre} por ${precioVenta} de oro.`);
+
+    const panelTienda = document.getElementById('panelTienda');
+    if (panelTienda && !panelTienda.hidden) {
+        renderizarPanelTienda();
+    }
+}
+
 function actualizarInventarioUI() {
     const inventarioHeroeEl = document.getElementById('inventarioHeroe');
     if (!inventarioHeroeEl) {
         return;
     }
+
+    inicializarSistemaEquipamiento();
 
     const inventario = personajes.jugador.inventario || [];
     inventarioHeroeEl.innerHTML = '';
@@ -144,14 +360,20 @@ function actualizarInventarioUI() {
         return;
     }
 
-    const conteo = inventario.reduce((acumulado, item) => {
-        acumulado[item] = (acumulado[item] || 0) + 1;
-        return acumulado;
-    }, {});
-
-    Object.entries(conteo).forEach(([nombre, cantidad]) => {
+    inventario.forEach((item) => {
         const fila = document.createElement('li');
-        fila.textContent = cantidad > 1 ? `${nombre} x${cantidad}` : nombre;
+        const nombre = typeof item === 'string' ? item : String(item?.nombre || 'Objeto sin nombre');
+
+        if (!esItemEquipable(item)) {
+            fila.textContent = nombre;
+            inventarioHeroeEl.appendChild(fila);
+            return;
+        }
+
+        const slot = item.tipo;
+        const estaEquipado = personajes.jugador.equipado[slot] === item;
+        fila.textContent = `${nombre}${estaEquipado ? ' (equipado)' : ''}`;
+
         inventarioHeroeEl.appendChild(fila);
     });
 }
@@ -166,7 +388,7 @@ function parsearItemVendedor(item) {
             return null;
         }
 
-        return { nombre, precio, cantidad: 1 };
+        return { nombre, precio, cantidad: 1, tipo: 'consumible' };
     }
 
     if (!item || typeof item !== 'object') {
@@ -175,13 +397,18 @@ function parsearItemVendedor(item) {
 
     const nombre = String(item.nombre || '').trim();
     const precio = Number.parseInt(item.precio, 10);
-    const cantidad = Number.parseInt(item.cantidad, 10);
+    const cantidad = item.cantidad === undefined ? 1 : Number.parseInt(item.cantidad, 10);
 
     if (!nombre || Number.isNaN(precio) || precio <= 0 || Number.isNaN(cantidad) || cantidad < 0) {
         return null;
     }
 
-    return { nombre, precio, cantidad };
+    return {
+        ...item,
+        nombre,
+        precio,
+        cantidad,
+    };
 }
 
 function cerrarPanelTienda() {
@@ -220,6 +447,7 @@ function renderizarPanelTienda() {
                 <div>
                     <p class="itemTiendaNombre">${item.nombre}</p>
                     <p class="itemTiendaPrecio">${item.precio} de oro</p>
+                    <p class="fuenteParrafo">${item.tipo === 'arma' ? `Ataque: ${item.ataque ?? 0} | Fuerza: ${item.fuerza ?? 0}` : ''}${item.tipo === 'escudo' ? `Defensa: ${item.defensa ?? 0} | Vida: ${item.vida ?? 0}` : ''}</p>
                     <p class="fuenteParrafo">Stock: ${item.cantidad}</p>
                 </div>
                 <button class="boton-verde" data-indice="${item.indice}" ${item.cantidad === 0 ? 'disabled' : ''}>${item.cantidad === 0 ? 'Agotado' : 'Comprar'}</button>
@@ -267,7 +495,7 @@ function renderizarPanelTienda() {
             }
 
             personajes.jugador.oro -= precioItem;
-            personajes.jugador.inventario.push(nombreItem);
+            personajes.jugador.inventario.push({ ...itemActual, cantidad: 1 });
 
             if (itemOriginal && typeof itemOriginal === 'object' && Number.isInteger(itemOriginal.cantidad)) {
                 itemOriginal.cantidad = Math.max(0, itemOriginal.cantidad - 1);
@@ -353,6 +581,16 @@ export function configurarMovimientoPorComando() {
         //Prevenimos que el formulario se envie y la pagina se recargue
         event.preventDefault();
 
+        if (procesarComandoEquipar(inputComando.value)) {
+            inputComando.value = '';
+            return;
+        }
+
+        if (procesarComandoVender(inputComando.value)) {
+            inputComando.value = '';
+            return;
+        }
+
         //Normalizamos el comando introducido por el usuario
         const comandoNormalizado = normalizarComando(inputComando.value);
         //VEr esto ?¿? que falla
@@ -395,6 +633,9 @@ export function configurarMovimientoPorComando() {
 }
 
 export function mostrarSala() {
+
+    inicializarSistemaEquipamiento();
+    recalcularAtributosPorEquipo();
 
     //1. Obtener Id de la URL
     const parametrosURL = new URLSearchParams(window.location.search);
@@ -518,19 +759,7 @@ export function mostrarSala() {
     }
 
     // --- RELLENAR UI DEL JUGADOR ---
-    const jugador = personajes.jugador;
-    const nivelHeroeEl = document.getElementById("nivelHeroe");
-    const vidaHeroeEl = document.getElementById("vidaHeroe");
-    const ataqueHeroeEl = document.getElementById("ataqueHeroe");
-    const defensaHeroeEl = document.getElementById("defensaHeroe");
-
-    const oroHeroeEl = document.getElementById("oroHeroe");
-
-    if (nivelHeroeEl) nivelHeroeEl.textContent = `Nombre: ${jugador.nombre} (Niv. ${jugador.nivel})`;
-    if (vidaHeroeEl) vidaHeroeEl.textContent = `Vida: ${jugador.salud}`;
-    if (ataqueHeroeEl) ataqueHeroeEl.textContent = `Ataque: ${jugador.ataque}`;
-    if (defensaHeroeEl) defensaHeroeEl.textContent = `Defensa: ${jugador.defensa}`;
-    if (oroHeroeEl) oroHeroeEl.textContent = `Oro: ${jugador.oro}`;
+    actualizarAtributosHeroeUI();
     actualizarInventarioUI();
 
 

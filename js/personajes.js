@@ -1,10 +1,13 @@
 
+import { equipamientos } from './equipamentos.js';
+
 export const personajes = {
     jugador: {
-        nombre: "Jugador",
+        nombre: "Manolo",
         salud: 100,
         ataque: 10,
         defensa: 5,
+        fuerza: 10,
         imagen: "../img/jugador.png",
         nivel: 1,
         experiencia: 0,
@@ -17,11 +20,12 @@ export const personajes = {
         salud: 100,
         ataque: 0,
         inventario: [
-            { nombre: "Poción de salud", precio: 20, cantidad: 5 },
-            { nombre: "Espada de madera", precio: 1, cantidad: 1 },
-            { nombre: "Escudo de madera", precio: 1, cantidad: 1 }
+            ...equipamientos.armas.map((arma) => ({ ...arma, tipo: 'arma', cantidad: 1 })),
+            ...equipamientos.escudos.map((escudo) => ({ ...escudo, tipo: 'escudo', cantidad: 1 }))
         ],
-        imagen: "../img/vendedor.png",  
+        imagen: "../img/vendedor.png",
+        
+        
     },
     monstruos: [
         {
