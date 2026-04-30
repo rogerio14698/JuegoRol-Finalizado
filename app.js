@@ -1,4 +1,4 @@
-import { configurarMovimientoPorComando, configurarBotonBuscar, mostrarSala } from './js/acciones.js';
+import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, mostrarSala } from './js/acciones.js';
 import { renderizarTemplate } from './js/cargarTemplates.js';
 
 // 1. Lógica del botón de inicio ,no depende de los templates
@@ -33,6 +33,7 @@ async function iniciarPantalla() {
         // D. Registramos los eventos del teclado y botones
         configurarMovimientoPorComando();
         configurarBotonBuscar();
+        configurarBotonComprar();
 
         console.log("Sistema cargado: Sala y Consola listas.");
     } catch (error) {

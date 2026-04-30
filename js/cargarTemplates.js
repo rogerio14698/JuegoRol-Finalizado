@@ -1,9 +1,6 @@
 
 
 //Gerar una funcion que me renderize el template por el id del area donde quiero renderizarlo, y el template que quiero renderizar.
-
-//Ruta de donde tengo el archivo html del template.
-const rutaTemplate = '../template/templateConsola.html';
 //Clonar el contenido del template y renderizarlo en el area deseada.
 
 export async function renderizarTemplate(idArea, rutaTemplate) {

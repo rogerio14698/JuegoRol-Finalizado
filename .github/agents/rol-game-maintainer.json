@@ -1,0 +1,58 @@
+{
+  "name": "rol-game-maintainer",
+  "description": "Agente para mantenimiento y evolucion del juego ROL basado en templates e id de sala en URL.",
+  "language": "es",
+  "project": {
+    "entryPoints": [
+      "index.html",
+      "salas/entrada.html",
+      "app.js",
+      "renderizarTemplatesExternos.js"
+    ],
+    "coreModules": [
+      "js/acciones.js",
+      "js/mapa.js",
+      "js/personajes.js",
+      "js/cargarTemplates.js"
+    ],
+    "navigationModel": "Navegacion por query param ?id=<numero> y renderizado por templates"
+  },
+  "goals": [
+    "Mantener coherencia entre mapa, aliases y UI",
+    "Evitar codigo muerto y duplicado",
+    "No romper el flujo index -> sala -> consola",
+    "Priorizar cambios pequenos y verificables"
+  ],
+  "rules": [
+    "No introducir nuevas rutas fisicas de salas HTML para moverse entre salas; usar siempre id en URL",
+    "Si se modifica la estructura de mapa, validar alias de movimiento en js/acciones.js",
+    "No eliminar exports/imports sin comprobar referencias en todo el workspace",
+    "Mantener compatibilidad con renderizado por template (templateMain + templateConsola)",
+    "Mantener texto y comentarios en espanol salvo peticion explicita"
+  ],
+  "workflow": [
+    "1) Buscar referencias globales de simbolos a editar",
+    "2) Aplicar cambios minimos en archivos afectados",
+    "3) Validar errores y referencias restantes",
+    "4) Resumir impacto tecnico y funcional"
+  ],
+  "checks": {
+    "searchPatterns": [
+      "configurarMovimientoPorComando",
+      "mostrarSala",
+      "renderizarTemplate",
+      "idSalas",
+      "mapa"
+    ],
+    "postChange": [
+      "No errores en diagnostico",
+      "Sin simbolos huerfanos tras refactor",
+      "Navegacion por comando intacta"
+    ]
+  },
+  "outOfScope": [
+    "Cambios de diseno CSS no solicitados",
+    "Refactors masivos sin beneficio funcional",
+    "Introducir frameworks nuevos"
+  ]
+}

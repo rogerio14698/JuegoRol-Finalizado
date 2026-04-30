@@ -3,23 +3,6 @@
 import { idSalas, mapa } from './mapa.js';
 import { personajes } from './personajes.js';
 
-
-//Defimmos las rutas de todas las salas
-const rutasSalas = {
-    entrada: '../salas/entrada.html',
-    pasilloA: '../salas/pasilloA.html',
-    pasilloB: '../salas/pasilloB.html',
-    pasilloC: '../salas/pasilloC.html',
-    pasilloD: '../salas/pasilloD.html',
-    sala1: '../salas/sala1.html',
-    sala2: '../salas/sala2.html',
-    sala3: '../salas/sala3.html',
-    sala4: '../salas/sala4.html',
-    salaJefe: '../salas/salaJefe.html',
-    tienda: '../salas/tienda.html',
-    anteSalaJefe: '../salas/salaSemiBoos.html'
-};
-
 //Definimos los alias de las direcciones para movernos por consola
 const aliasDirecciones = {
     norte: 'norte',
@@ -51,12 +34,6 @@ const aliasSalas = {
     antesalajefe: 'anteSalaJefe',
     santuario: 'anteSalaJefe'
 };
-
-const personajeEstadoMapa = {
-    salaActual: idSalas.entrada,
-    //empezamos en la entrada
-    //Aqui se puede añadir los atributos
-}
 
 //Funcion para normalizar el comando introducido por el usuario
 function normalizarComando(valor) {
@@ -116,17 +93,6 @@ function obtenerDestinoPorComando(sala, comandoNormalizado) {
     return null;
 }
 
-//Funcion para obtener la ruta de la sala destino a partir del id de la sala destino
-function obtenerRutaSala(destinoId) {
-    const claveSala = Object.keys(idSalas).find((clave) => idSalas[clave] === destinoId);
-
-    if (!claveSala) {
-        return null;
-    }
-
-    return rutasSalas[claveSala] ?? null;
-}
-
 //Funcion para actualizar el historial de movimientos del jugador
 function actualizarHistorial(mensaje) {
     const historial = document.getElementById('historial');
@@ -154,6 +120,103 @@ function obtenerSalidasDisponibles(sala) {
     return Object.keys(sala.ubicacion).filter((direccion) => sala.ubicacion[direccion] !== -1);
 }
 
+function actualizarOroUI() {
+    const oroHeroeEl = document.getElementById('oroHeroe');
+    if (oroHeroeEl) {
+        oroHeroeEl.textContent = `Oro: ${personajes.jugador.oro}`;
+    }
+}
+
+function parsearItemVendedor(itemTexto) {
+    const [nombreRaw, precioRaw] = itemTexto.split(':');
+    const nombre = (nombreRaw || '').trim();
+    const precio = Number.parseInt((precioRaw || '').trim(), 10);
+
+    if (!nombre || Number.isNaN(precio) || precio <= 0) {
+        return null;
+    }
+
+    return { nombre, precio };
+}
+
+function cerrarPanelTienda() {
+    const panel = document.getElementById('panelTienda');
+    if (panel) {
+        panel.hidden = true;
+    }
+}
+
+function renderizarPanelTienda() {
+    const fondoSala = document.querySelector('.fondoSala');
+    if (!fondoSala) {
+        return;
+    }
+
+    let panel = document.getElementById('panelTienda');
+    if (!panel) {
+        panel = document.createElement('section');
+        panel.id = 'panelTienda';
+        panel.className = 'panelTienda';
+        panel.hidden = true;
+        fondoSala.appendChild(panel);
+    }
+
+    const items = personajes.vendedor.inventario
+        .map(parsearItemVendedor)
+        .filter(Boolean);
+
+    const htmlItems = items.length === 0
+        ? '<p class="fuenteParrafo">El mercader no tiene articulos disponibles.</p>'
+        : items.map((item) => `
+            <article class="itemTienda">
+                <div>
+                    <p class="itemTiendaNombre">${item.nombre}</p>
+                    <p class="itemTiendaPrecio">${item.precio} de oro</p>
+                </div>
+                <button class="boton-verde" data-item="${item.nombre}" data-precio="${item.precio}">Comprar</button>
+            </article>
+        `).join('');
+
+    panel.innerHTML = `
+        <div class="panelTiendaCabecera">
+            <h3>Tienda del Mercader</h3>
+            <button id="btn-cerrar-tienda" class="boton-azul">Cerrar</button>
+        </div>
+        <div class="panelTiendaItems">${htmlItems}</div>
+        <div class="panelTiendaPie">
+            <p class="fuenteParrafo">Tu oro actual: <strong>${personajes.jugador.oro}</strong></p>
+        </div>
+    `;
+
+    const btnCerrar = panel.querySelector('#btn-cerrar-tienda');
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', cerrarPanelTienda);
+    }
+
+    panel.querySelectorAll('button[data-item]').forEach((botonCompra) => {
+        botonCompra.addEventListener('click', () => {
+            const nombreItem = botonCompra.dataset.item;
+            const precioItem = Number.parseInt(botonCompra.dataset.precio || '0', 10);
+
+            if (!nombreItem || Number.isNaN(precioItem) || precioItem <= 0) {
+                actualizarHistorial('No se pudo completar la compra del articulo seleccionado.');
+                return;
+            }
+
+            if (personajes.jugador.oro < precioItem) {
+                actualizarHistorial(`No tienes oro suficiente para comprar ${nombreItem}.`);
+                return;
+            }
+
+            personajes.jugador.oro -= precioItem;
+            personajes.jugador.inventario.push(nombreItem);
+            actualizarOroUI();
+            actualizarHistorial(`Has comprado ${nombreItem} por ${precioItem} de oro.`);
+            renderizarPanelTienda();
+        });
+    });
+}
+
 export function configurarBotonBuscar() {
     const btnBuscar = document.getElementById('btn-buscar');
 
@@ -177,11 +240,35 @@ export function configurarBotonBuscar() {
         if (oroEncontrado > 0) {
             personajes.jugador.oro += oroEncontrado;
             actualizarHistorial(`Has encontrado ${oroEncontrado} monedas de oro. Total: ${personajes.jugador.oro}`);
-            const oroHeroeEl = document.getElementById('oroHeroe');
-            if (oroHeroeEl) oroHeroeEl.textContent = `Oro: ${personajes.jugador.oro}`;
+            actualizarOroUI();
         } else {
             actualizarHistorial('No has encontrado nada en esta sala.');
         }
+    });
+}
+
+export function configurarBotonComprar() {
+    const btnComprar = document.getElementById('btn-comprar');
+
+    if (!btnComprar) {
+        return;
+    }
+
+    btnComprar.addEventListener('click', () => {
+        const parametrosURL = new URLSearchParams(window.location.search);
+        const salaId = parseInt(parametrosURL.get('id')) || idSalas.entrada;
+
+        if (salaId !== idSalas.tienda) {
+            actualizarHistorial('Solo puedes comprar cuando estes dentro de la tienda.');
+            return;
+        }
+
+        renderizarPanelTienda();
+        const panel = document.getElementById('panelTienda');
+        if (panel) {
+            panel.hidden = false;
+        }
+        actualizarHistorial('Has abierto la tienda del mercader.');
     });
 }
 
@@ -259,6 +346,10 @@ export function mostrarSala() {
         //Como en el mapa definimos la ruta de la imagen, la ponemos como fondo directamente.
         fondoSala.style.backgroundImage = `url(${sala.imagenSala})`;
 
+    }
+
+    if (sala.id !== idSalas.tienda) {
+        cerrarPanelTienda();
     }
 
     const nombreSalaEl = document.getElementById("nombreSala");

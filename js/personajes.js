@@ -8,7 +8,7 @@ export const personajes = {
         imagen: "../img/jugador.png",
         nivel: 1,
         experiencia: 0,
-        oro: 0,
+        oro: 100,
         inventario: [],
     },
     vendedor:{
