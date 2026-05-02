@@ -1,7 +1,12 @@
 import { idSalas, mapa } from '../mapa.js';
 import { personajes } from '../personajes.js';
+import { crearJugadorInicial } from '../personajes.js';
 
 export { idSalas, mapa, personajes };
+
+const CLAVE_ESTADO_JUGADOR = 'estadoJugador';
+const CLAVE_VICTORIA_FINAL = 'victoriaFinalDisponible';
+let omitirGuardadoEstadoJugador = false;
 
 export const aliasDirecciones = {
     norte: 'norte',
@@ -123,6 +128,113 @@ export function actualizarHistorial(mensaje) {
         const entradas = JSON.parse(localStorage.getItem('historialPartida') || '[]');
         entradas.unshift(mensaje);
         localStorage.setItem('historialPartida', JSON.stringify(entradas));
+    } catch (e) {
+        // localStorage no disponible; continuamos sin persistir
+    }
+}
+
+function clonarItem(item) {
+    if (!item || typeof item !== 'object') {
+        return item;
+    }
+
+    return { ...item };
+}
+
+function itemCoincideConReferencia(item, referencia) {
+    if (!item || !referencia || typeof item !== 'object' || typeof referencia !== 'object') {
+        return false;
+    }
+
+    return item.nombre === referencia.nombre
+        && item.tipo === referencia.tipo
+        && (item.ataque ?? 0) === (referencia.ataque ?? 0)
+        && (item.fuerza ?? 0) === (referencia.fuerza ?? 0)
+        && (item.defensa ?? 0) === (referencia.defensa ?? 0)
+        && (item.vida ?? 0) === (referencia.vida ?? 0);
+}
+
+function resolverEquipoDesdeInventario(inventario, referencia) {
+    if (!referencia) {
+        return null;
+    }
+
+    return inventario.find((item) => itemCoincideConReferencia(item, referencia)) ?? clonarItem(referencia);
+}
+
+export function guardarEstadoJugador() {
+    if (omitirGuardadoEstadoJugador) {
+        return;
+    }
+
+    try {
+        localStorage.setItem(CLAVE_ESTADO_JUGADOR, JSON.stringify(personajes.jugador));
+    } catch (e) {
+        // localStorage no disponible; continuamos sin persistir
+    }
+}
+
+export function cargarEstadoJugador() {
+    try {
+        omitirGuardadoEstadoJugador = false;
+        const estadoGuardado = localStorage.getItem(CLAVE_ESTADO_JUGADOR);
+
+        if (!estadoGuardado) {
+            return false;
+        }
+
+        const jugadorGuardado = JSON.parse(estadoGuardado);
+        const inventario = Array.isArray(jugadorGuardado.inventario)
+            ? jugadorGuardado.inventario.map((item) => clonarItem(item))
+            : [];
+
+        personajes.jugador = {
+            ...personajes.jugador,
+            ...jugadorGuardado,
+            inventario,
+            equipado: {
+                arma: resolverEquipoDesdeInventario(inventario, jugadorGuardado.equipado?.arma),
+                escudo: resolverEquipoDesdeInventario(inventario, jugadorGuardado.equipado?.escudo),
+            },
+        };
+
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+export function reiniciarEstadoJugador() {
+    omitirGuardadoEstadoJugador = true;
+    personajes.jugador = crearJugadorInicial();
+
+    try {
+        localStorage.removeItem(CLAVE_ESTADO_JUGADOR);
+        localStorage.removeItem(CLAVE_VICTORIA_FINAL);
+    } catch (e) {
+        // localStorage no disponible; continuamos sin persistir
+    }
+}
+
+export function marcarVictoriaFinalDisponible() {
+    try {
+        localStorage.setItem(CLAVE_VICTORIA_FINAL, '1');
+    } catch (e) {
+        // localStorage no disponible; continuamos sin persistir
+    }
+}
+
+export function tieneVictoriaFinalDisponible() {
+    try {
+        return localStorage.getItem(CLAVE_VICTORIA_FINAL) === '1';
+    } catch (e) {
+        return false;
+    }
+}
+
+export function limpiarVictoriaFinalDisponible() {
+    try {
+        localStorage.removeItem(CLAVE_VICTORIA_FINAL);
     } catch (e) {
         // localStorage no disponible; continuamos sin persistir
     }

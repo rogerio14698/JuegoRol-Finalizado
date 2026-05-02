@@ -28,13 +28,28 @@ export function recalcularAtributosPorEquipo() {
     const base = personajes.jugador.atributosBase;
     const arma = personajes.jugador.equipado.arma;
     const escudo = personajes.jugador.equipado.escudo;
+    const saludActual = personajes.jugador.salud;
 
     personajes.jugador.ataque = base.ataque + (arma?.ataque ?? 0);
     personajes.jugador.fuerza = base.fuerza + (arma?.fuerza ?? 0);
     personajes.jugador.defensa = base.defensa + (escudo?.defensa ?? 0);
 
     const saludConEquipo = base.salud + (escudo?.vida ?? 0);
-    personajes.jugador.salud = Math.max(1, saludConEquipo);
+    personajes.jugador.salud = Math.max(1, Math.min(saludActual ?? saludConEquipo, saludConEquipo));
+}
+
+export function ajustarSaludPorCambioDeEscudo(escudoAnterior, escudoNuevo) {
+    inicializarSistemaEquipamiento();
+
+    const bonusVidaAnterior = escudoAnterior?.vida ?? 0;
+    const bonusVidaNuevo = escudoNuevo?.vida ?? 0;
+    const deltaVida = bonusVidaNuevo - bonusVidaAnterior;
+    const saludMaximaNueva = personajes.jugador.atributosBase.salud + bonusVidaNuevo;
+
+    personajes.jugador.salud = Math.max(
+        1,
+        Math.min((personajes.jugador.salud ?? saludMaximaNueva) + deltaVida, saludMaximaNueva)
+    );
 }
 
 export function actualizarOroUI() {
@@ -42,6 +57,19 @@ export function actualizarOroUI() {
     if (oroHeroeEl) {
         oroHeroeEl.textContent = `Oro: ${personajes.jugador.oro}`;
     }
+}
+
+function renderizarBarraVida(vidaActual, vidaMaxima, bonusVida) {
+    const porcentajeVida = vidaMaxima > 0
+        ? Math.max(0, Math.min(100, (vidaActual / vidaMaxima) * 100))
+        : 0;
+
+    return `
+        <span class="vidaHeroeTexto">Vida: ${vidaActual}/${vidaMaxima} + escudo Bonus ${bonusVida}</span>
+        <span class="barraVidaHeroe" aria-hidden="true">
+            <span class="barraVidaHeroeRelleno" style="width: ${porcentajeVida}%;"></span>
+        </span>
+    `;
 }
 
 export function actualizarAtributosHeroeUI() {
@@ -55,6 +83,7 @@ export function actualizarAtributosHeroeUI() {
     const bonusFuerza = arma?.fuerza ?? 0;
     const bonusDefensa = escudo?.defensa ?? 0;
     const bonusVida = escudo?.vida ?? 0;
+    const vidaMaxima = (jugador.atributosBase?.salud ?? jugador.salud) + bonusVida;
 
     const nivelHeroeEl = document.getElementById('nivelHeroe');
     const vidaHeroeEl = document.getElementById('vidaHeroe');
@@ -63,7 +92,9 @@ export function actualizarAtributosHeroeUI() {
     const defensaHeroeEl = document.getElementById('defensaHeroe');
 
     if (nivelHeroeEl) nivelHeroeEl.textContent = `${jugador.nombre} | ${jugador.nivel}`;
-    if (vidaHeroeEl) vidaHeroeEl.textContent = `Vida: ${jugador.salud} + escudo Bonus ${bonusVida}`;
+    if (vidaHeroeEl) {
+        vidaHeroeEl.innerHTML = renderizarBarraVida(jugador.salud, vidaMaxima, bonusVida);
+    }
     if (ataqueHeroeEl) ataqueHeroeEl.textContent = `Ataque: ${jugador.ataque} + arma Bonus ${bonusAtaque}`;
     if (fuerzaHeroeEl) fuerzaHeroeEl.textContent = `Fuerza: ${jugador.fuerza} + arma Bonus ${bonusFuerza}`;
     if (defensaHeroeEl) defensaHeroeEl.textContent = `Defensa: ${jugador.defensa} + escudo Bonus ${bonusDefensa}`;

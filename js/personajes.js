@@ -1,27 +1,40 @@
 
 import { equipamientos } from './equipamentos.js';
 
-const armaInicial = { ...equipamientos.armas[0], tipo: 'arma', cantidad: 1 };
-const escudoInicial = { ...equipamientos.escudos[0], tipo: 'escudo', cantidad: 1 };
-const pocionInicial = { nombre: 'Pocion', tipo: 'consumible', cantidad: 3 };
+function crearJugadorInicial() {
+    const armaInicial = { ...equipamientos.armas[0], tipo: 'arma', cantidad: 1 };
+    const escudoInicial = { ...equipamientos.escudos[0], tipo: 'escudo', cantidad: 1 };
+    const pocionInicial = { nombre: 'Pocion', tipo: 'consumible', cantidad: 3 };
+    const atributosBase = {
+        salud: 300,
+        ataque: 40,
+        defensa: 10,
+        fuerza: 15,
+    };
 
-export const personajes = {
-    jugador: {
+    return {
         nombre: "Manolo",
-        salud: 100,
-        ataque: 10,
-        defensa: 5,
-        fuerza: 10,
+        salud: atributosBase.salud + escudoInicial.vida,
+        ataque: atributosBase.ataque,
+        defensa: atributosBase.defensa,
+        fuerza: atributosBase.fuerza,
         imagen: "../img/jugador.png",
         nivel: 1,
         experiencia: 0,
-        oro: 10000,
+        oro: 50,
+        atributosBase,
         inventario: [armaInicial, escudoInicial, pocionInicial],
         equipado: {
             arma: armaInicial,
             escudo: escudoInicial,
         },
-    },
+    };
+}
+
+export { crearJugadorInicial };
+
+export const personajes = {
+    jugador: crearJugadorInicial(),
     vendedor:{
         id: "vendedor",
         nombre: "Mercader Errante",
@@ -29,7 +42,8 @@ export const personajes = {
         ataque: 0,
         inventario: [
             ...equipamientos.armas.map((arma) => ({ ...arma, tipo: 'arma', cantidad: 1 })),
-            ...equipamientos.escudos.map((escudo) => ({ ...escudo, tipo: 'escudo', cantidad: 1 }))
+            ...equipamientos.escudos.map((escudo) => ({ ...escudo, tipo: 'escudo', cantidad: 1 })),
+            { nombre: 'Pocion', tipo: 'consumible', cantidad: 10, precio: 5 },
         ],
         imagen: "../img/vendedor.png",
         
@@ -129,9 +143,9 @@ export const personajes = {
         {
             id: "lilih",
             nombre: "Lilih",
-            salud: 400,
-            ataque: 40,
-            defensa: 50,
+            salud: 200,
+            ataque: 35,
+            defensa: 10,
             dialogoIntro: "¡Ah, un intrépido aventurero! Soy Lilith, la reina de las sombras. Si buscas poder, conocimiento o simplemente un desafío digno, has venido al lugar correcto... pero ten cuidado, no todos los que se acercan a mí salen con vida.",
             equipo: [
                 { nombre: "Garras de Lilith", ataque: 20, defensa: 0, precio: 0 },

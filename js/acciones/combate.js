@@ -1,5 +1,6 @@
-import { personajes, idSalas, estadoCombate, RETARDO_TURNO_MONSTRUO_TRAS_ATAQUE_HEROE_MS, normalizarTextoConEspacios, actualizarHistorial, tirarDado } from './shared.js';
+import { personajes, idSalas, estadoCombate, RETARDO_TURNO_MONSTRUO_TRAS_ATAQUE_HEROE_MS, normalizarTextoConEspacios, actualizarHistorial, tirarDado, reiniciarEstadoJugador, marcarVictoriaFinalDisponible, tieneVictoriaFinalDisponible, limpiarVictoriaFinalDisponible } from './shared.js';
 import { inicializarSistemaEquipamiento, recalcularAtributosPorEquipo, actualizarAtributosHeroeUI, actualizarInventarioUI } from './uiHeroe.js';
+import { procesarDropTrasVictoria } from './drop.js';
 import { animarEntradaMonstruoDark, animarSlashBestia, animarGolpeEspadaMagica, animeEstaDisponible } from '../animacionesCombate.js';
 
 export function actualizarEquipoEnemigoUI(equipo) {
@@ -46,20 +47,26 @@ export function crearStatsCombateEnemigo(datosEnemigo) {
     const ataqueBase = datosEnemigo.ataque ?? 0;
     const defensaBase = datosEnemigo.defensa ?? 0;
     const fuerzaBase = datosEnemigo.fuerza ?? ataqueBase;
+    const vidaConEquipo = vidaBase + bonusEquipo.vida;
+    const ataqueConEquipo = ataqueBase + bonusEquipo.ataque;
+    const defensaConEquipo = defensaBase + bonusEquipo.defensa;
 
     return {
         id: datosEnemigo.id,
         nombre: datosEnemigo.nombre,
         vidaBase,
         vidaBonus: bonusEquipo.vida,
-        vidaTotal: vidaBase + bonusEquipo.vida,
-        vidaActual: vidaBase + bonusEquipo.vida,
+        vidaConEquipo,
+        vidaTotal: vidaBase,
+        vidaActual: vidaBase,
         ataqueBase,
         ataqueBonus: bonusEquipo.ataque,
-        ataqueTotal: ataqueBase + bonusEquipo.ataque,
+        ataqueConEquipo,
+        ataqueTotal: ataqueBase,
         defensaBase,
         defensaBonus: bonusEquipo.defensa,
-        defensaTotal: defensaBase + bonusEquipo.defensa,
+        defensaConEquipo,
+        defensaTotal: defensaBase,
         fuerzaBase,
         fuerzaBonus: 0,
         fuerzaTotal: fuerzaBase,
@@ -73,23 +80,9 @@ export function actualizarUIEnemigoDesdeStats(statsCombate) {
     const defensaEnemigoEl = document.getElementById('defensaEnemigo');
 
     if (nombreEnemigoEl) nombreEnemigoEl.textContent = `Nombre: ${statsCombate.nombre}`;
-    if (vidaEnemigoEl) vidaEnemigoEl.textContent = `Vida: ${Math.max(0, statsCombate.vidaActual)} + equipo Bonus ${statsCombate.vidaBonus}`;
-    if (ataqueEnemigoEl) ataqueEnemigoEl.textContent = `Ataque: ${statsCombate.ataqueTotal} + equipo Bonus ${statsCombate.ataqueBonus}`;
-    if (defensaEnemigoEl) defensaEnemigoEl.textContent = `Defensa: ${statsCombate.defensaTotal} + equipo Bonus ${statsCombate.defensaBonus}`;
-}
-
-function reiniciarHeroeTrasDerrota() {
-    const jugador = personajes.jugador;
-
-    jugador.oro = 0;
-    jugador.inventario = [];
-
-    inicializarSistemaEquipamiento();
-    jugador.equipado = { arma: null, escudo: null };
-
-    recalcularAtributosPorEquipo();
-    actualizarAtributosHeroeUI();
-    actualizarInventarioUI();
+    if (vidaEnemigoEl) vidaEnemigoEl.textContent = `Vida: ${Math.max(0, statsCombate.vidaActual)} + Bonus ${statsCombate.vidaBonus}`;
+    if (ataqueEnemigoEl) ataqueEnemigoEl.textContent = `Ataque: ${statsCombate.ataqueBase} + Bonus ${statsCombate.ataqueBonus}`;
+    if (defensaEnemigoEl) defensaEnemigoEl.textContent = `Defensa: ${statsCombate.defensaBase} + Bonus ${statsCombate.defensaBonus}`;
 }
 
 export function ocultarDialogoIntroEnSala() {
@@ -157,14 +150,34 @@ function limpiarEstadoCombate() {
 }
 
 function finalizarCombateVictoria() {
+    const jugador = personajes.jugador;
+    const eraJefeFinal = estadoCombate.statsCombate?.id === 'lilih';
+
     if (estadoCombate.statsCombate) {
         actualizarHistorial(`${estadoCombate.statsCombate.nombre} ha sido derrotado.`);
+    }
+
+    inicializarSistemaEquipamiento();
+    jugador.atributosBase.fuerza += 5;
+    jugador.atributosBase.defensa += 3;
+    const curacionVictoria = Math.floor((jugador.atributosBase.salud ?? jugador.salud) * 0.5);
+    recalcularAtributosPorEquipo();
+    const vidaMaximaActual = (jugador.atributosBase?.salud ?? jugador.salud) + (jugador.equipado?.escudo?.vida ?? 0);
+    jugador.salud = Math.min(vidaMaximaActual, jugador.salud + curacionVictoria);
+    actualizarAtributosHeroeUI();
+    actualizarHistorial('Te fortaleces tras la victoria. Ganas +5 de fuerza y +3 de defensa.');
+    actualizarHistorial(`Recuperas ${curacionVictoria} puntos de vida tras la batalla.`);
+
+    if (eraJefeFinal) {
+        marcarVictoriaFinalDisponible();
+        actualizarHistorial('Lilith ha caido. Escribe "victoria" para cerrar la partida y ver el Historial de Partida.');
     }
 
     if (estadoCombate.seccionEnemigo) {
         estadoCombate.seccionEnemigo.style.display = 'none';
     }
 
+    procesarDropTrasVictoria();
     limpiarEstadoCombate();
 }
 
@@ -191,9 +204,9 @@ function ejecutarTurnoMonstruo() {
 
     if (jugador.salud <= 0) {
         actualizarHistorial('Has caido en combate. Pierdes oro, inventario y bonificadores.');
-        reiniciarHeroeTrasDerrota();
+        reiniciarEstadoJugador();
         limpiarEstadoCombate();
-        window.location.href = `${window.location.pathname}?id=${idSalas.sala1}`;
+        window.location.href = `${window.location.pathname}?id=${idSalas.entrada}`;
         return;
     }
 
@@ -296,5 +309,24 @@ export function procesarComandoAtaque(comandoCrudo) {
         ejecutarTurnoMonstruo();
     }, retardoContraataque);
 
+    return true;
+}
+
+export function procesarComandoVictoria(comandoCrudo) {
+    const comando = normalizarTextoConEspacios(comandoCrudo);
+
+    if (comando !== 'victoria') {
+        return false;
+    }
+
+    if (!tieneVictoriaFinalDisponible()) {
+        actualizarHistorial('Aun no has derrotado a Lilith. No puedes declarar la victoria todavia.');
+        return true;
+    }
+
+    actualizarHistorial('La mazmorra ha sido conquistada. La partida termina con victoria.');
+    limpiarVictoriaFinalDisponible();
+    reiniciarEstadoJugador();
+    window.location.href = '../index.html#historial';
     return true;
 }

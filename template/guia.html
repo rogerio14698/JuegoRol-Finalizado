@@ -1,9 +1,9 @@
-<template id="guia">
+﻿<template id="guia">
     <section class="intro">
         <h1>Guia de Exploracion</h1>
         <p>
             Esta guia resume como se vive la aventura: movimiento por salas, encuentros
-            aleatorios, busqueda de oro y progresion hacia el Trono Impio.
+            con monstruos, busqueda de oro, uso de pociones, equipamiento y progresion hacia el Trono Impio.
         </p>
     </section>
 
@@ -44,8 +44,8 @@
             <div class="cardBody">
                 <h2>4. Climax</h2>
                 <p>
-                    El recorrido termina en la Sala del Trono Impio. El combate final puede
-                    aparecer con baja probabilidad, haciendo ese momento mas intenso.
+                    El recorrido termina en la Sala del Trono Impio. Derrota al jefe final
+                    para completar la aventura.
                 </p>
             </div>
         </article>
@@ -53,30 +53,82 @@
     <section class="guiaTienda">
         <h2>Guia de Tienda</h2>
         <p>
-            En la tienda puedes comprar objetos que mejoran tus stats o te dan ventajas
-            en combate. El oro se consigue al derrotar enemigos o encontrar tesoros.
-            Elige sabiamente tus compras para maximizar tu supervivencia.
+            En la tienda puedes comprar objetos que mejoran tus stats o te dan ventajas en combate.
+            Haz click en el boton <strong>Comprar</strong> para abrir el panel de la tienda, o escribe
+            <code>comprar pocion</code> en el campo de comandos para adquirir directamente una pocion
+            por <strong>5 de oro</strong>.
         </p>
 
         <h2>Oro</h2>
         <p>
-            El oro es esencial para comprar objetos y mejorar tus habilidades. Asegúrate de gestionarlo cuidadosamente para no quedarte sin recursos en momentos críticos.
+            El oro se obtiene explorando salas con el boton <strong>Buscar</strong> y derrotando enemigos.
+            Es imprescindible para comprar equipo y pociones.
         </p>
     </section>
 
-    </section>
-
     <section class="commands">
-        <h2>Comandos validos de movimiento</h2>
+        <h2>Mecanica de Combate</h2>
+        <p>Al entrar en una sala con enemigo, el combate comienza automaticamente. El monstruo ataca primero:</p>
         <ul>
-            <li>norte</li>
-            <li>sur</li>
-            <li>este</li>
-            <li>oeste</li>
-            <li>arriba</li>
-            <li>abajo</li>
-            <li>izquierda</li>
-            <li>derecha</li>
+            <li><strong>Dano recibido</strong> = Fuerza monstruo + Aleatorio(1-10) - Defensa heroe - Bonus defensa escudo</li>
+            <li>Si tu vida llega a 0, vuelves a la sala inicial y pierdes todo el oro, pociones y bonificadores.</li>
+        </ul>
+        <p>Cuando es tu turno, escribe <code>ataque</code> para golpear:</p>
+        <ul>
+            <li><strong>Dano infligido</strong> = Fuerza heroe + Bonus fuerza arma + Aleatorio(1-10) - Defensa monstruo</li>
+            <li>Si el monstruo muere, hay un <strong>40% de probabilidad</strong> de que suelte un objeto.</li>
+        </ul>
+
+        <h2>Objetos tras la victoria</h2>
+        <p>Al matar un monstruo puede aparecer un objeto aleatorio:</p>
+        <ul>
+            <li>50%: <strong>espada</strong> (bonificador de ataque) &mdash; 50%: <strong>escudo</strong> (bonificador de defensa).</li>
+            <li>El bonificador es un numero entre 1 y 10. Si supera al de tu equipo actual, se equipa automaticamente.</li>
+        </ul>
+
+        <h2>Comandos de movimiento</h2>
+        <ul>
+            <li><code>norte</code> / <code>arriba</code></li>
+            <li><code>sur</code> / <code>abajo</code></li>
+            <li><code>este</code> / <code>derecha</code></li>
+            <li><code>oeste</code> / <code>izquierda</code></li>
+            <li>Tambien puedes escribir el nombre de la sala destino (ej: <code>tienda</code>, <code>entrada</code>, <code>sala1</code>)</li>
+        </ul>
+
+        <h2>Comandos de combate</h2>
+        <ul>
+            <li><code>ataque</code> &mdash; ataca al monstruo en tu turno</li>
+        </ul>
+
+        <h2>Comandos de pociones</h2>
+        <ul>
+            <li><code>pocion</code></li>
+            <li><code>tomar pocion</code></li>
+            <li><code>beber pocion</code></li>
+            <li><code>usar pocion</code></li>
+        </ul>
+        <p>Cada pocion restaura <strong>10 puntos de vida</strong>. Tambien puedes usar el boton <strong>Pocion</strong>.</p>
+
+        <h2>Comandos de tienda</h2>
+        <ul>
+            <li><code>comprar pocion</code> &mdash; compra una pocion por 5 de oro (solo en la tienda)</li>
+            <li><code>comprar</code> &mdash; abre el panel de la tienda para comprar armas y escudos</li>
+            <li><code>vender [nombre del objeto]</code> &mdash; vende un objeto del inventario (ej: <code>vender espada de hierro</code>)</li>
+        </ul>
+
+        <h2>Comandos de equipamiento</h2>
+        <ul>
+            <li><code>equipar [nombre del objeto]</code> &mdash; equipa un arma o escudo del inventario</li>
+            <li>Ejemplo: <code>equipar espada magica</code>, <code>equipar escudo de hierro</code></li>
+        </ul>
+
+        <h2>Botones de accion</h2>
+        <ul>
+            <li><strong>Buscar</strong> &mdash; busca oro en la sala actual (una vez por sala)</li>
+            <li><strong>Pocion</strong> &mdash; usa una pocion del inventario</li>
+            <li><strong>Comprar</strong> &mdash; abre la tienda (solo en la sala tienda)</li>
+            <li><strong>Mapa</strong> &mdash; muestra las salidas disponibles desde tu posicion actual</li>
+            <li><strong>Abandonar</strong> &mdash; vuelve al menu principal</li>
         </ul>
     </section>
 </template>

@@ -1,6 +1,8 @@
 import { mapa, idSalas, estadoCombate, normalizarComando, obtenerDestinoPorComando, actualizarHistorial, obtenerSalaActualId } from './shared.js';
 import { procesarComandoEquipar, procesarComandoVender } from './equipamiento.js';
-import { procesarComandoAtaque } from './combate.js';
+import { procesarComandoAtaque, procesarComandoVictoria } from './combate.js';
+import { procesarComandoPocion } from './pociones.js';
+import { procesarComandoComprarPocion } from './tienda.js';
 
 export function configurarMovimientoPorComando() {
     const inputComando = document.getElementById('comando');
@@ -25,7 +27,22 @@ export function configurarMovimientoPorComando() {
             return;
         }
 
+        if (procesarComandoComprarPocion(inputComando.value)) {
+            inputComando.value = '';
+            return;
+        }
+
+        if (procesarComandoPocion(inputComando.value)) {
+            inputComando.value = '';
+            return;
+        }
+
         if (procesarComandoAtaque(inputComando.value)) {
+            inputComando.value = '';
+            return;
+        }
+
+        if (procesarComandoVictoria(inputComando.value)) {
             inputComando.value = '';
             return;
         }

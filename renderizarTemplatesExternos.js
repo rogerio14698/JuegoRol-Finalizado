@@ -176,6 +176,7 @@ function configurarNavegacionWeb() {
         evento.preventDefault();
 
         const vista = enlace.dataset.vista;
+        window.location.hash = vista;
         mostrarVista(vista);
         actualizarEnlaceActivo(vista);
 
@@ -183,6 +184,13 @@ function configurarNavegacionWeb() {
             cargarHistorialDesdeStorage();
         }
     });
+}
+
+function obtenerVistaDesdeHash() {
+    const vistaHash = window.location.hash.replace('#', '').trim();
+    const vistasValidas = new Set(['home', 'guia', 'historial', 'cargarPartida']);
+
+    return vistasValidas.has(vistaHash) ? vistaHash : 'home';
 }
 
 // Esta función prepara la portada completa.
@@ -225,9 +233,13 @@ async function iniciarPantallaWeb() {
         configurarNavegacionWeb();
         configurarBotonInicioWeb();
 
-        // Dejamos visible sólo la portada al entrar en index.html.
-        mostrarVista('home');
-        actualizarEnlaceActivo('home');
+        const vistaInicial = obtenerVistaDesdeHash();
+        mostrarVista(vistaInicial);
+        actualizarEnlaceActivo(vistaInicial);
+
+        if (vistaInicial === 'historial') {
+            cargarHistorialDesdeStorage();
+        }
 
         console.log('Sistema cargado: Navegador y Tutorial listos.');
     } catch (error) {

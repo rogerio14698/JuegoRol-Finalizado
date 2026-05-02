@@ -1,5 +1,7 @@
-import { idSalas, personajes, obtenerSalaActualId, actualizarHistorial } from './shared.js';
+import { idSalas, personajes, obtenerSalaActualId, actualizarHistorial, normalizarTextoConEspacios } from './shared.js';
 import { actualizarInventarioUI, actualizarOroUI } from './uiHeroe.js';
+
+const PRECIO_POCION = 5;
 
 export function parsearItemVendedor(item) {
     if (typeof item === 'string') {
@@ -154,4 +156,42 @@ export function configurarBotonComprar() {
         }
         actualizarHistorial('Has abierto la tienda del mercader.');
     });
+}
+
+export function procesarComandoComprarPocion(comandoCrudo) {
+    const comando = normalizarTextoConEspacios(comandoCrudo);
+    const comandosCompra = ['comprar pocion', 'comprar'];
+
+    if (!comandosCompra.includes(comando)) {
+        return false;
+    }
+
+    const salaId = obtenerSalaActualId();
+    if (salaId !== idSalas.tienda) {
+        return false;
+    }
+
+    const jugador = personajes.jugador;
+
+    if (jugador.oro < PRECIO_POCION) {
+        actualizarHistorial(`No tienes oro suficiente para comprar una pocion. Necesitas ${PRECIO_POCION} de oro.`);
+        return true;
+    }
+
+    jugador.oro -= PRECIO_POCION;
+
+    const indicePocion = jugador.inventario.findIndex(
+        (item) => item && typeof item === 'object' && item.tipo === 'consumible' && normalizarTextoConEspacios(String(item.nombre || '')) === 'pocion'
+    );
+
+    if (indicePocion !== -1) {
+        jugador.inventario[indicePocion].cantidad = (Number.parseInt(jugador.inventario[indicePocion].cantidad, 10) || 0) + 1;
+    } else {
+        jugador.inventario.push({ nombre: 'Pocion', tipo: 'consumible', cantidad: 1 });
+    }
+
+    actualizarOroUI();
+    actualizarInventarioUI();
+    actualizarHistorial(`Has comprado una pocion por ${PRECIO_POCION} de oro. Oro restante: ${jugador.oro}.`);
+    return true;
 }

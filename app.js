@@ -1,6 +1,7 @@
-import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, configurarBotonMapa, configurarBotonPocion, mostrarSala } from './js/acciones.js';
+import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, configurarBotonMapa, configurarBotonPocion, configurarBotonAbandonar, mostrarSala } from './js/acciones.js';
 import { renderizarTemplate } from './js/cargarTemplates.js';
 import { inicializarAnimeJS } from './js/animacionesCombate.js';
+import { cargarEstadoJugador, guardarEstadoJugador } from './js/acciones/shared.js';
 
 // 1. Lógica del botón de inicio ,no depende de los templates
 const btnInicio = document.getElementById("btnInicio");
@@ -13,6 +14,8 @@ if (btnInicio) {
 // 2. Función principal que construye la página
 async function iniciarPantalla() {
     try {
+        cargarEstadoJugador();
+
         const contenedorPrincipal = document.getElementById('contenedorPrincipal');
         const contenedorConsola = document.getElementById('contenedorConsola');
 
@@ -37,6 +40,7 @@ async function iniciarPantalla() {
         configurarBotonComprar();
         configurarBotonMapa();
         configurarBotonPocion();
+        configurarBotonAbandonar();
 
         await inicializarAnimeJS();
 
@@ -45,6 +49,9 @@ async function iniciarPantalla() {
         console.error("Error cargando la interfaz:", error);
     }
 }
+
+window.addEventListener('pagehide', guardarEstadoJugador);
+window.addEventListener('beforeunload', guardarEstadoJugador);
 
 // Ejecutamos la carga
 iniciarPantalla();

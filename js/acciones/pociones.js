@@ -1,6 +1,8 @@
 import { personajes, normalizarTextoConEspacios, actualizarHistorial } from './shared.js';
 import { inicializarSistemaEquipamiento, actualizarAtributosHeroeUI, actualizarInventarioUI } from './uiHeroe.js';
 
+const CURACION_POCION = 10;
+
 export function usarPocionHeroe() {
     inicializarSistemaEquipamiento();
 
@@ -32,10 +34,9 @@ export function usarPocionHeroe() {
     const vidaBase = jugador.atributosBase?.salud ?? jugador.salud;
     const bonusVidaEscudo = jugador.equipado?.escudo?.vida ?? 0;
     const vidaMaxima = vidaBase + bonusVidaEscudo;
-    const curacion = Math.max(1, Math.floor(vidaBase * 0.25));
     const saludAnterior = jugador.salud;
 
-    jugador.salud = Math.min(vidaMaxima, jugador.salud + curacion);
+    jugador.salud = Math.min(vidaMaxima, jugador.salud + CURACION_POCION);
 
     pocion.cantidad = cantidadActual - 1;
     if (pocion.cantidad <= 0) {
@@ -47,6 +48,18 @@ export function usarPocionHeroe() {
 
     const curadoReal = jugador.salud - saludAnterior;
     actualizarHistorial(`Usas una pocion y recuperas ${curadoReal} de vida. Pociones restantes: ${Math.max(0, cantidadActual - 1)}.`);
+}
+
+export function procesarComandoPocion(comandoCrudo) {
+    const comando = normalizarTextoConEspacios(comandoCrudo);
+    const comandosPocion = ['pocion', 'tomar pocion', 'beber pocion', 'usar pocion'];
+
+    if (!comandosPocion.includes(comando)) {
+        return false;
+    }
+
+    usarPocionHeroe();
+    return true;
 }
 
 export function configurarBotonPocion() {

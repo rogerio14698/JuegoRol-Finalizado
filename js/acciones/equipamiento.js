@@ -1,5 +1,5 @@
 import { idSalas, personajes, normalizarTextoConEspacios, actualizarHistorial, obtenerSalaActualId } from './shared.js';
-import { inicializarSistemaEquipamiento, esItemEquipable, recalcularAtributosPorEquipo, actualizarAtributosHeroeUI, actualizarInventarioUI } from './uiHeroe.js';
+import { inicializarSistemaEquipamiento, esItemEquipable, recalcularAtributosPorEquipo, actualizarAtributosHeroeUI, actualizarInventarioUI, ajustarSaludPorCambioDeEscudo } from './uiHeroe.js';
 import { parsearItemVendedor, renderizarPanelTienda } from './tienda.js';
 
 function obtenerPrecioVenta(item) {
@@ -34,7 +34,11 @@ function equiparItemInventario(indiceItem) {
     }
 
     inicializarSistemaEquipamiento();
+    const escudoAnterior = personajes.jugador.equipado.escudo;
     personajes.jugador.equipado[item.tipo] = item;
+    if (item.tipo === 'escudo') {
+        ajustarSaludPorCambioDeEscudo(escudoAnterior, item);
+    }
     recalcularAtributosPorEquipo();
     actualizarAtributosHeroeUI();
     actualizarInventarioUI();
@@ -60,6 +64,7 @@ function venderItemInventario(indiceItem) {
     const precioVenta = obtenerPrecioVenta(item);
 
     inicializarSistemaEquipamiento();
+    const escudoAnterior = personajes.jugador.equipado.escudo;
     if (personajes.jugador.equipado[item.tipo] === item) {
         personajes.jugador.equipado[item.tipo] = null;
     }
@@ -67,6 +72,9 @@ function venderItemInventario(indiceItem) {
     inventario.splice(indiceItem, 1);
     personajes.jugador.oro += precioVenta;
     devolverItemAlMercader(item);
+    if (item.tipo === 'escudo') {
+        ajustarSaludPorCambioDeEscudo(escudoAnterior, personajes.jugador.equipado.escudo);
+    }
     recalcularAtributosPorEquipo();
     actualizarAtributosHeroeUI();
     actualizarInventarioUI();
