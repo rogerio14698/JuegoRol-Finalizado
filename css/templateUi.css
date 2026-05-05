@@ -228,3 +228,149 @@
 		align-items: flex-start;
 	}
 }
+
+/* Panel inventario + estadísticas */
+.panelMenu {
+	position: absolute;
+	inset: 0.9rem;
+	background: rgba(8, 11, 18, 0.93);
+	backdrop-filter: blur(4px);
+	border: 1px solid rgba(255, 140, 66, 0.45);
+	border-radius: 0.75rem;
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
+	padding: 0.9rem;
+	z-index: 7;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	overflow-y: auto;
+}
+
+.panelMenu[hidden] {
+	display: none;
+}
+
+.panelMenuCabecera {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.panelMenuCabecera h3 {
+	margin: 0;
+	color: var(--colorSecundarioTitulo);
+	font-family: var(--fuenteTitulo);
+}
+
+.panelMenuCuerpo {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.panelMenuBloque {
+	background: rgba(0, 0, 0, 0.35);
+	border: 1px solid rgba(198, 154, 91, 0.3);
+	border-radius: 0.55rem;
+	padding: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.panelMenuSubtitulo {
+	margin: 0;
+	font-family: var(--fuenteTitulo);
+	font-size: 0.85rem;
+	color: var(--colorSecundarioTitulo);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	border-bottom: 1px solid rgba(198, 154, 91, 0.25);
+	padding-bottom: 0.4rem;
+}
+
+.panelMenuStats,
+.panelMenuEquipo,
+.panelMenuConsumo {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.panelMenuStats li {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.5rem;
+	font-size: 0.88rem;
+	color: var(--colorNeutro1);
+	font-family: var(--fuenteParrafo);
+}
+
+.panelMenuStats li small {
+	color: var(--muted);
+	font-size: 0.78rem;
+}
+
+.menuStatEtiqueta {
+	color: var(--muted);
+	font-weight: 600;
+	min-width: 4.5rem;
+}
+
+.menuSlot {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	padding: 0.45rem 0.5rem;
+	border: 1px solid rgba(255, 140, 66, 0.22);
+	border-radius: 0.45rem;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+.menuSlotTipo {
+	font-size: 0.8rem;
+	color: var(--muted);
+	font-family: var(--fuenteParrafo);
+}
+
+.menuSlotDetalle {
+	display: flex;
+	flex-direction: column;
+	gap: 0.1rem;
+}
+
+.menuSlotNombre {
+	color: var(--colorNeutro1);
+	font-weight: 700;
+	font-size: 0.88rem;
+	font-family: var(--fuenteParrafo);
+}
+
+.menuSlotStats {
+	color: var(--colorSecundario);
+	font-size: 0.78rem;
+	font-family: var(--fuenteParrafo);
+}
+
+.menuSlotVacio {
+	color: var(--muted);
+	font-style: italic;
+	font-size: 0.82rem;
+	font-family: var(--fuenteParrafo);
+}
+
+.panelMenuConsumo li {
+	font-size: 0.88rem;
+	color: var(--colorNeutro1);
+	font-family: var(--fuenteParrafo);
+}
+
+@media (max-width: 780px) {
+	.panelMenuCuerpo {
+		grid-template-columns: 1fr;
+	}
+}

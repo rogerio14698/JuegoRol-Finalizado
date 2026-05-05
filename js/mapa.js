@@ -1,13 +1,45 @@
-//Deffinimos los id para identificar las diferentes salas del juego
+// ─────────────────────────────────────────────────────────────────────────────
+// js/mapa.js  — Definición del mapa de la mazmorra
+//
+// Este archivo contiene dos exportaciones clave:
+//   · idSalas: un objeto que asigna un número único a cada sala.
+//              Ese número es el que aparece en la URL (?id=X) cuando el jugador se mueve.
+//   · mapa:    un objeto donde cada clave es un id de sala y cada valor es
+//              un objeto con toda la información de esa sala (nombre, descripción,
+//              imagen de fondo, salidas disponibles, enemigos posibles y oro).
+//
+// Para añadir una sala nueva: agrégala a idSalas con un número único,
+// luego añade su bloque en mapa con todas sus propiedades.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Tabla de ids de sala ──────────────────────────────────────────────────────
+// Cada sala tiene un número que la identifica unívocamente.
+// Usamos este objeto como "diccionario" para no usar números mágicos en el código:
+// en lugar de escribir 1, escribimos idSalas.entrada, que es más legible.
+// El pasillo está dividido en tramos (A, B, C, D) para que cada tramo tenga
+// su propio id y no haya conflictos de navegación.
 export const idSalas = {"entrada": 1,
-    //Los bloques del paisllo
+    //Los tramos del pasillo central de la mazmorra
     "pasilloA": 2,  "pasilloB": 3, "pasilloC": 4, "pasilloD": 5,
     "sala1": 6, "sala2": 7,
     "sala3": 8, "sala4": 9, 
     "salaJefe": 10, "tienda": 11, 
     "anteSalaJefe": 12};
-/*El pasillo se divide en tandos bloques como sea necesario para que las ids no entren en conflito*/
 
+// ── Datos de cada sala del mapa ───────────────────────────────────────────────
+// El objeto mapa usa los ids como clave, lo que permite acceder a cualquier sala
+// con mapa[idSalas.entrada] o mapa[1] directamente.
+//
+// Cada sala tiene estas propiedades:
+//   · id          → número de sala (igual que la clave del objeto, para tenerlo accesible).
+//   · nombre      → texto que aparece como título en pantalla.
+//   · descripcion → texto narrativo que se muestra debajo del nombre.
+//   · imagenSala  → ruta de la imagen de fondo del área de juego.
+//   · ubicacion   → objeto con cuatro direcciones (norte/sur/este/oeste).
+//                   Cada dirección apunta al id de la sala destino, o -1 si hay pared.
+//   · probEnemigos→ probabilidad de que aparezca un enemigo al entrar (0 = nunca, 1 = siempre).
+//   · encontrarOro→ cantidad de oro que el jugador puede encontrar al buscar en la sala.
+//   · posiblesEnemigos → array con los ids de los monstruos que pueden aparecer aquí.
 export const mapa = {
     [idSalas.entrada]: {
         id: idSalas.entrada,

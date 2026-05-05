@@ -1,8 +1,26 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// js/acciones/combate.js  — Sistema de combate por turnos
+//
+// Gestiona todo el flujo de un encuentro contra un monstruo:
+//   1. crearStatsCombateEnemigo: crea el objeto de stats del enemigo para ese combate.
+//   2. iniciarEncuentroConMonstruo: inicia el combate con intro de 5s y primer ataque del monstruo.
+//   3. ejecutarTurnoMonstruo: calcula el daño del monstruo al héroe.
+//   4. procesarComandoAtaque: el héroe escribe "ataque" y golpea al monstruo.
+//   5. finalizarCombateVictoria: el monstruo muere → bonificadores, curación y loot.
+//   6. procesarComandoVictoria: el héroe escribe "victoria" tras matar a Lilith → fin.
+//
+// Fórmulas de daño:
+//   · Héroe ataca:    fuerza_base + bonus_arma + tirarDado(1,10) - defensa_enemigo
+//   · Monstruo ataca: fuerza_monstruo + tirarDado(1,10) - defensa_base_héroe - bonus_escudo
+// ─────────────────────────────────────────────────────────────────────────────
+
 import { personajes, idSalas, estadoCombate, RETARDO_TURNO_MONSTRUO_TRAS_ATAQUE_HEROE_MS, normalizarTextoConEspacios, actualizarHistorial, tirarDado, reiniciarEstadoJugador, marcarVictoriaFinalDisponible, tieneVictoriaFinalDisponible, limpiarVictoriaFinalDisponible } from './shared.js';
 import { inicializarSistemaEquipamiento, recalcularAtributosPorEquipo, actualizarAtributosHeroeUI, actualizarInventarioUI } from './uiHeroe.js';
 import { procesarDropTrasVictoria } from './drop.js';
 import { animarEntradaMonstruoDark, animarSlashBestia, animarGolpeEspadaMagica, animeEstaDisponible } from '../animacionesCombate.js';
 
+// actualizarEquipoEnemigoUI: muestra el equipo del enemigo en la sección del DOM.
+// Si el enemigo no tiene equipo, muestra "Sin equipo.".
 export function actualizarEquipoEnemigoUI(equipo) {
     const equipoEnemigoEl = document.getElementById('equipoEnemigo');
     if (!equipoEnemigoEl) {
@@ -28,6 +46,8 @@ export function actualizarEquipoEnemigoUI(equipo) {
     });
 }
 
+// calcularBonusEquipoEnemigo (privada): suma los bonificadores de todo el equipo
+// del enemigo y devuelve el total de ataque, defensa y vida extra.
 function calcularBonusEquipoEnemigo(equipo) {
     if (!Array.isArray(equipo) || equipo.length === 0) {
         return { ataque: 0, defensa: 0, vida: 0 };
@@ -41,6 +61,10 @@ function calcularBonusEquipoEnemigo(equipo) {
     }, { ataque: 0, defensa: 0, vida: 0 });
 }
 
+// crearStatsCombateEnemigo: construye el objeto statsCombate del enemigo
+// sumando sus stats base con los bonificadores de su equipo.
+// El objeto resultante es el que se almacena en estadoCombate.statsCombate
+// y se actualiza a medida que el combate avanza (vidaActual cambia con cada golpe).
 export function crearStatsCombateEnemigo(datosEnemigo) {
     const bonusEquipo = calcularBonusEquipoEnemigo(datosEnemigo.equipo);
     const vidaBase = datosEnemigo.salud ?? 0;
@@ -73,6 +97,8 @@ export function crearStatsCombateEnemigo(datosEnemigo) {
     };
 }
 
+// actualizarUIEnemigoDesdeStats: refresca los elementos del DOM del enemigo
+// (nombre, vida, ataque, defensa) con los valores actuales de statsCombate.
 export function actualizarUIEnemigoDesdeStats(statsCombate) {
     const nombreEnemigoEl = document.getElementById('nombreEnemigo');
     const vidaEnemigoEl = document.getElementById('vidaEnemigo');
@@ -85,6 +111,9 @@ export function actualizarUIEnemigoDesdeStats(statsCombate) {
     if (defensaEnemigoEl) defensaEnemigoEl.textContent = `Defensa: ${statsCombate.defensaBase} + Bonus ${statsCombate.defensaBonus}`;
 }
 
+// ocultarDialogoIntroEnSala: oculta con animación el diálogo de introducción
+// del monstruo (el texto que aparece flotando en pantalla al inicio del combate).
+// Añade la clase 'ocultar' y elimina el elemento del DOM 350ms después.
 export function ocultarDialogoIntroEnSala() {
     const dialogoEl = document.getElementById('dialogoIntroCombate');
     if (!dialogoEl) {
@@ -97,6 +126,9 @@ export function ocultarDialogoIntroEnSala() {
     }, 350);
 }
 
+// mostrarDialogoIntroEnSala (privada): crea o reemplaza el diálogo de intro
+// del monstruo dentro de .fondoSala y lo oculta automáticamente después de
+// duracionMs milisegundos (por defecto 5000 = 5 segundos).
 function mostrarDialogoIntroEnSala(texto, duracionMs = 5000) {
     const fondoSala = document.querySelector('.fondoSala');
     if (!fondoSala) {
@@ -125,6 +157,9 @@ function mostrarDialogoIntroEnSala(texto, duracionMs = 5000) {
     }, duracionMs);
 }
 
+// limpiarEstadoCombate (privada): cancela todos los timeouts activos y resetea
+// el objeto estadoCombate a su estado inicial (activo=false, turno='ninguno', etc.).
+// Se llama al terminar el combate, ya sea por victoria o derrota.
 function limpiarEstadoCombate() {
     if (estadoCombate.introTimeoutId) {
         clearTimeout(estadoCombate.introTimeoutId);
@@ -149,6 +184,13 @@ function limpiarEstadoCombate() {
     estadoCombate.seccionEnemigo = null;
 }
 
+// finalizarCombateVictoria (privada): ejecuta todos los efectos de ganar un combate:
+//   · Muestra el mensaje de derrota del enemigo.
+//   · Incrementa fuerza base +5 y defensa base +3.
+//   · Cura el 50% de la vida base del jugador.
+//   · Si era Lilith (jefe final), marca la victoria final como disponible.
+//   · Llama a procesarDropTrasVictoria() para generar loot.
+//   · Limpia el estado de combate.
 function finalizarCombateVictoria() {
     const jugador = personajes.jugador;
     const eraJefeFinal = estadoCombate.statsCombate?.id === 'lilih';
@@ -181,6 +223,10 @@ function finalizarCombateVictoria() {
     limpiarEstadoCombate();
 }
 
+// ejecutarTurnoMonstruo (privada): el monstruo ataca al héroe.
+// Fórmula de daño: fuerza_monstruo + dado(1-10) - defensa_base_héroe - bonus_escudo.
+// Si el héroe muere (salud <= 0), se reinicia el estado y se vuelve a la entrada.
+// Si sobrevive, el turno pasa al héroe.
 function ejecutarTurnoMonstruo() {
     if (!estadoCombate.activo || !estadoCombate.statsCombate) {
         return;
@@ -214,6 +260,10 @@ function ejecutarTurnoMonstruo() {
     actualizarHistorial('Tu turno. Escribe "ataque" para golpear al monstruo.');
 }
 
+// iniciarEncuentroConMonstruo: punto de entrada del combate.
+// Limpia cualquier combate previo, configura el estado para el nuevo enemigo
+// y muestra la introducción (diálogo del monstruo) durante 5 segundos.
+// Pasados los 5 segundos, el monstruo ataca primero.
 export function iniciarEncuentroConMonstruo(datosEnemigo, seccionEnemigo) {
     if (!datosEnemigo || datosEnemigo.id === personajes.vendedor.id) {
         return;
@@ -248,6 +298,11 @@ export function iniciarEncuentroConMonstruo(datosEnemigo, seccionEnemigo) {
     }, 5000);
 }
 
+// procesarComandoAtaque: el jugador escribe "ataque" para golpear al monstruo.
+// Solo funciona si es el turno del héroe y hay un combate activo.
+// Fórmula de daño: fuerza_base + bonus_arma + dado(1-10) - defensa_enemigo.
+// Si el monstruo muere, llama a finalizarCombateVictoria.
+// Si sobrevive, programa el contraataque del monstruo con RETARDO_TURNO_MONSTRUO.
 export function procesarComandoAtaque(comandoCrudo) {
     const comando = normalizarTextoConEspacios(comandoCrudo);
 
@@ -312,6 +367,9 @@ export function procesarComandoAtaque(comandoCrudo) {
     return true;
 }
 
+// procesarComandoVictoria: el jugador escribe "victoria" después de matar a Lilith.
+// Solo está disponible si marcarVictoriaFinalDisponible() fue llamada previamente.
+// Al ejecutarse: reinicia el estado del jugador y redirige a la portada/historial.
 export function procesarComandoVictoria(comandoCrudo) {
     const comando = normalizarTextoConEspacios(comandoCrudo);
 

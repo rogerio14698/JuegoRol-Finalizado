@@ -13,12 +13,13 @@
 
 #cargarPartida .cargarPartidaPanel h1 {
     margin: 0 0 10px;
-    font-family: 'Cinzel', serif;
+    font-family: var(--fuenteTitulo);
     font-size: clamp(1.8rem, 4vw, 2.6rem);
 }
 
 #cargarPartida .cargarPartidaPanel > p {
     margin: 0;
+    font-family: var(--fuenteParrafo);
     color: var(--muted);
     line-height: 1.7;
 }
@@ -42,14 +43,38 @@
 
 #cargarPartida .cargarCard h2 {
     margin: 0;
-    font-family: 'Cinzel', serif;
+    font-family: var(--fuenteTitulo);
     font-size: 1.3rem;
 }
 
 #cargarPartida .cargarCard p {
     margin: 0;
+    font-family: var(--fuenteParrafo);
     color: var(--muted);
     line-height: 1.65;
+}
+
+#cargarPartida #nombreJugador {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.28);
+    color: var(--text);
+    padding: 10px 12px;
+    font-family: var(--fuenteParrafo);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+#cargarPartida #nombreJugador::placeholder {
+    color: color-mix(in srgb, var(--muted) 78%, #ffffff 22%);
+}
+
+#cargarPartida #nombreJugador:focus {
+    outline: none;
+    border-color: var(--colorSecundarioTitulo);
+    background: rgba(0, 0, 0, 0.42);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--colorSecundarioTitulo) 25%, transparent 75%);
 }
 
 #cargarPartida .cargarBtn {
@@ -61,7 +86,7 @@
     color: var(--text);
     padding: 10px 14px;
     font-weight: 700;
-    font-family: 'EB Garamond', serif;
+    font-family: var(--fuenteParrafo);
     transition: background 0.2s ease;
 }
 

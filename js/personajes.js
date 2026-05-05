@@ -1,10 +1,27 @@
+// ─────────────────────────────────────────────────────────────
+// js/personajes.js  —  Definición de todos los personajes del juego
+//
+// Exporta:
+//   · crearJugadorInicial(): función que crea un jugador nuevo con stats iniciales.
+//   · personajes: objeto con .jugador (mutable), .vendedor y .monstruos[].
+//
+// El objeto personajes.jugador se mutado en tiempo de ejecución por todos los
+// módulos de acciones (equipo, combate, etc.).
+// Para reiniciar el juego, basta con hacer personajes.jugador = crearJugadorInicial().
+// ─────────────────────────────────────────────────────────────
 
 import { equipamientos } from './equipamentos.js';
 
+// crearJugadorInicial: construye y devuelve un objeto jugador fresco.
+// Toma el arma[0] y el escudo[0] de equipamientos como equipo inicial.
+// La salud inicial incluye ya el bonus de vida del escudo de madera.
 function crearJugadorInicial() {
     const armaInicial = { ...equipamientos.armas[0], tipo: 'arma', cantidad: 1 };
     const escudoInicial = { ...equipamientos.escudos[0], tipo: 'escudo', cantidad: 1 };
     const pocionInicial = { nombre: 'Pocion', tipo: 'consumible', cantidad: 3 };
+
+    // atributosBase guarda los valores SIN bonificadores de equipo,
+    // para que recalcularAtributosPorEquipo siempre parta de ellos.
     const atributosBase = {
         salud: 300,
         ataque: 40,
@@ -14,7 +31,7 @@ function crearJugadorInicial() {
 
     return {
         nombre: "Manolo",
-        salud: atributosBase.salud + escudoInicial.vida,
+        salud: atributosBase.salud + escudoInicial.vida,  // 300 + 10 (escudo de madera)
         ataque: atributosBase.ataque,
         defensa: atributosBase.defensa,
         fuerza: atributosBase.fuerza,
@@ -33,8 +50,15 @@ function crearJugadorInicial() {
 
 export { crearJugadorInicial };
 
+// personajes: objeto central del juego que contiene al jugador, al vendedor y
+// a todos los monstruos. Es un objeto MUTABLE — todos los módulos de acciones
+// lo importan y lo modifican directamente.
 export const personajes = {
     jugador: crearJugadorInicial(),
+    // vendedor: personaje especial de la tienda. No combate (ataque 0).
+    // Su inventario incluye todas las armas y escudos del catálogo más pociones.
+    // Se genera dinámicamente con spread del array de equipamientos para que
+    // cualquier cambio en equipamentos.js se refleje aquí automáticamente.
     vendedor:{
         id: "vendedor",
         nombre: "Mercader Errante",
@@ -49,6 +73,16 @@ export const personajes = {
         
         
     },
+    // monstruos: array con todos los enemigos del juego. Cada monstruo tiene:
+    //   id         — clave única que se usa en el mapa para asignarle sala.
+    //   nombre     — texto visible en la consola.
+    //   salud      — puntos de vida iniciales (se reduce durante el combate).
+    //   ataque     — daño base sin equipamiento.
+    //   defensa    — reducción de daño recibido.
+    //   dialogoIntro — texto que aparece en la pantalla al entrar en la sala.
+    //   equipo     — items que el monstruo lleva puestos (calculan stats en combate).
+    //   inventario — items que el jugador puede obtener al derrotar al monstruo.
+    //   imagen     — ruta relativa al archivo de imagen del monstruo.
     monstruos: [
         {
             id: "demogorgon",

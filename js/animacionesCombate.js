@@ -1,8 +1,27 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// js/animacionesCombate.js  — Animaciones de combate con Anime.js
+//
+// Este módulo carga Anime.js desde CDN de forma dinámica (import() asíncrono)
+// y expone funciones de animación que se usan durante el combate.
+// Si el CDN no está disponible, el módulo funciona en modo "sin animaciones"
+// y el juego sigue siendo jugable (las funciones simplemente devuelven sin hacer nada).
+//
+// Animaciones disponibles:
+//   · animarEntradaMonstruoDark(): niebla/vigneta al aparecer el monstruo.
+//   · animarSlashBestia():         trazo SVG de garra al atacar el monstruo.
+//   · animarGolpeEspadaMagica():   trazo SVG de espada al atacar el héroe.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Instancia de la función anime() cargada desde el CDN.
 let animeInstancia = null;
+// Flag que indica si Anime.js está disponible para usar.
 let animeDisponible = false;
 
+// URL del módulo ESM de Anime.js (versión sin bundle, importable directamente).
 const CDN_ANIME_ESM = 'https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.es.js';
 
+// presetsTiempo: valores de duración en milisegundos para cada tipo de animación.
+// Se pueden modificar con actualizarPresetsAnimacionCombate() para ajustar la velocidad.
 const presetsTiempo = {
     entradaDark: {
         fadeIn: 240,
@@ -24,10 +43,15 @@ const presetsTiempo = {
     hitStopMs: 56,
 };
 
+// obtenerEscenario (privada): devuelve el elemento .fondoSala que actúa como
+// contenedor de todas las animaciones de combate.
 function obtenerEscenario() {
     return document.querySelector('.fondoSala');
 }
 
+// crearOverlayAnimacion (privada): crea un <div> vacío con la clase indicada
+// y lo inserta en el escenario (.fondoSala). Se usa como capa de animación
+// que se elimina del DOM al terminar la animación.
 function crearOverlayAnimacion(clase) {
     const escenario = obtenerEscenario();
     if (!escenario) {
@@ -40,6 +64,8 @@ function crearOverlayAnimacion(clase) {
     return overlay;
 }
 
+// obtenerLongitudAproximada (privada): devuelve la longitud del path SVG
+// usando getTotalLength(). Si el navegador no lo soporta, usa 1200 como fallback.
 function obtenerLongitudAproximada(pathEl) {
     try {
         return pathEl.getTotalLength();
@@ -48,6 +74,9 @@ function obtenerLongitudAproximada(pathEl) {
     }
 }
 
+// aplicarHitStop (privada): congela visualmente el escenario durante hitStopMs
+// añadiendo/quitando la clase CSS 'hitstopCombate'. El efecto de "freeze frame"
+// se consigue con un cambio de clase que pausa las animaciones CSS de ese elemento.
 function aplicarHitStop() {
     const escenario = obtenerEscenario();
     if (!escenario) {
@@ -60,6 +89,8 @@ function aplicarHitStop() {
     }, presetsTiempo.hitStopMs);
 }
 
+// sacudirCamara (privada): anima el escenario con una pequeña vibración
+// usando translate para simular el sacudón de cámara (camera shake) de los videojuegos.
 function sacudirCamara() {
     const escenario = obtenerEscenario();
     if (!escenario || !animeDisponible || !animeInstancia) {
@@ -79,6 +110,8 @@ function sacudirCamara() {
     });
 }
 
+// generarParticulasSVG (privada): genera un string de elementos SVG <circle>
+// que representan las partículas de impacto del golpe.
 function generarParticulasSVG(cantidad = 12) {
     const particulas = [];
     for (let i = 0; i < cantidad; i += 1) {
@@ -87,6 +120,9 @@ function generarParticulasSVG(cantidad = 12) {
     return particulas.join('');
 }
 
+// construirOverlayVectorial (privada): crea y rellena el overlay con la estructura
+// SVG completa para una animación de combate. El tipo 'bestia' o 'magia' cambia
+// el tema visual (colores definidos en CSS).
 function construirOverlayVectorial(tipo) {
     const overlay = crearOverlayAnimacion(`overlayCombateVector ${tipo === 'bestia' ? 'temaBestia' : 'temaMagia'}`);
     if (!overlay) {
@@ -122,6 +158,9 @@ function construirOverlayVectorial(tipo) {
     return overlay;
 }
 
+// inicializarAnimeJS: intenta cargar Anime.js desde el CDN con import() dinámico.
+// Si lo consigue, guarda la instancia en animeInstancia y pone animeDisponible=true.
+// Si falla (sin internet, CDN caído, etc.), el módulo queda en modo fallback silencioso.
 export async function inicializarAnimeJS() {
     if (animeDisponible && animeInstancia) {
         return true;
@@ -145,14 +184,21 @@ export async function inicializarAnimeJS() {
     return false;
 }
 
+// animeEstaDisponible: indica si Anime.js fue cargado correctamente.
+// Se usa como guard antes de llamar a cualquier función de animación.
 export function animeEstaDisponible() {
     return animeDisponible;
 }
 
+// obtenerPresetsAnimacionCombate: devuelve una copia profunda de los presets
+// para que el código externo no los modifique accidentalmente por referencia.
 export function obtenerPresetsAnimacionCombate() {
     return JSON.parse(JSON.stringify(presetsTiempo));
 }
 
+// actualizarPresetsAnimacionCombate: permite sobreescribir valores de presetsTiempo
+// de forma recursiva (deep merge). Útil para ajustar la velocidad sin reescribir
+// todo el objeto de presets.
 export function actualizarPresetsAnimacionCombate(nuevosPresets = {}) {
     const fusionar = (destino, origen) => {
         Object.keys(origen || {}).forEach((clave) => {

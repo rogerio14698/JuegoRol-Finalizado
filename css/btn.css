@@ -15,7 +15,7 @@
     border-radius: 0.6rem;
     background: var(--botonFondo);
     color: var(--botonTexto);
-    font: 700 1rem/1.1 "EB Garamond", serif;
+    font: 700 1rem/1.1 var(--fuenteParrafo);
     letter-spacing: 0.03em;
     cursor: pointer;
     box-shadow: 0 5px 10px var(--botonSombra);

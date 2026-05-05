@@ -55,12 +55,14 @@ header {
 }
 
 .fuenteTitulo {
+    font-family: var(--fuenteTitulo);
     font-size: 2.5em;
     color: var(--colorSecundarioTitulo);
     margin-bottom: 20px;
 }
 
 .fuenteParrafo {
+    font-family: var(--fuenteParrafo);
     font-size: 1.2em;
     color: var(--colorSecundarioParrafo);
 }

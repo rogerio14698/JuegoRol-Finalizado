@@ -1,3 +1,19 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// renderizarTemplatesExternos.js  — SPA de la portada (index.html)
+//
+// Gestiona toda la interfaz de la portada del juego, que es una Single Page
+// Application (SPA) basada en hash (#home, #guia, #historial, #cargarPartida).
+//
+// Flujo de inicio:
+//   1. iniciarPantallaWeb() se llama al cargar la página.
+//   2. cargarTemplatesWeb() descarga e inyecta los 5 templates HTML externos.
+//   3. configurarNavegacionWeb() registra la delegación de eventos sobre document.
+//   4. configurarBotonInicioWeb() registra el botón "Empezar a jugar".
+//   5. mostrarVista() muestra la sección que corresponde al hash actual de la URL.
+//
+// Navegación: los enlaces usan data-vista="nombre" y se interceptan en el listener
+// de clicks. Nunca hay navegación por rutas físicas entre las secciones de la portada.
+// ─────────────────────────────────────────────────────────────────────────────
 
 // Rutas de los templates que se usarán dentro de index.html.
 // Cada bloque visual tiene su propio archivo para mantener el HTML principal más limpio.
@@ -97,6 +113,9 @@ function mostrarVista(vista) {
     }
 }
 
+// actualizarEnlaceActivo: recorre todos los enlaces de navegación con data-vista
+// y marca como 'active' solo el que coincide con la vista actual.
+// Esto da feedback visual al usuario de dónde está dentro de la portada.
 function actualizarEnlaceActivo(vista) {
     const enlacesVista = document.querySelectorAll('#navegadorPaginas a[data-vista]');
 
@@ -105,6 +124,9 @@ function actualizarEnlaceActivo(vista) {
     });
 }
 
+// configurarBotonInicioWeb: escucha clicks sobre #btnInicio y redirige al
+// archivo de entrada del juego (salas/entrada.html).
+// Usa event delegation para que funcione aunque el botón sea insertado dinámicamente.
 function configurarBotonInicioWeb() {
     document.addEventListener('click', (evento) => {
         const botonInicio = evento.target.closest('#btnInicio');
@@ -114,6 +136,96 @@ function configurarBotonInicioWeb() {
         }
 
         window.location.href = 'salas/entrada.html';
+    });
+}
+
+// configurarBotonIrAlJuego: intercepta el click sobre #btnIrAlJuego (botón "Ir al juego"
+// de la tarjeta de gestión de partidas). Lee el nombre escrito en #nombreJugador,
+// lo guarda en localStorage para que app.js lo aplique al jugador al iniciar,
+// y luego navega a salas/entrada.html. Si el campo está vacío se usa el nombre por defecto.
+function configurarBotonIrAlJuego() {
+    document.addEventListener('click', (evento) => {
+        const boton = evento.target.closest('#btnIrAlJuego');
+        if (!boton) {
+            return;
+        }
+
+        evento.preventDefault();
+
+        const input = document.getElementById('nombreJugador');
+        const nombre = input ? input.value.trim() : '';
+
+        if (nombre) {
+            try {
+                localStorage.setItem('nombreJugadorPendiente', nombre);
+            } catch (e) {
+                // localStorage no disponible; continuamos sin persistir el nombre
+            }
+        }
+
+        window.location.href = 'salas/entrada.html';
+    });
+}
+
+// configurarCarruselMonstruosGuia: prepara el carrusel de imágenes de monstruos
+// dentro de la tarjeta "Salas y Amenazas". Soporta flechas anterior/siguiente
+// y navegación directa por puntos.
+function configurarCarruselMonstruosGuia() {
+    const carruseles = document.querySelectorAll('[data-carrusel-monstruos]');
+
+    carruseles.forEach((carrusel) => {
+        if (carrusel.dataset.inicializado === '1') {
+            return;
+        }
+
+        const track = carrusel.querySelector('.carruselTrack');
+        const slides = carrusel.querySelectorAll('.carruselSlide');
+        const prevBtn = carrusel.querySelector('.carruselControlPrev');
+        const nextBtn = carrusel.querySelector('.carruselControlNext');
+        const puntos = carrusel.querySelectorAll('.carruselPunto');
+
+        if (!track || slides.length === 0 || !prevBtn || !nextBtn) {
+            return;
+        }
+
+        let indiceActual = 0;
+
+        const pintar = () => {
+            track.style.transform = `translateX(-${indiceActual * 100}%)`;
+
+            slides.forEach((slide, idx) => {
+                slide.classList.toggle('is-active', idx === indiceActual);
+            });
+
+            puntos.forEach((punto, idx) => {
+                punto.classList.toggle('is-active', idx === indiceActual);
+            });
+        };
+
+        prevBtn.addEventListener('click', () => {
+            indiceActual = (indiceActual - 1 + slides.length) % slides.length;
+            pintar();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            indiceActual = (indiceActual + 1) % slides.length;
+            pintar();
+        });
+
+        puntos.forEach((punto) => {
+            punto.addEventListener('click', () => {
+                const indice = Number.parseInt(punto.dataset.slide, 10);
+                if (Number.isNaN(indice)) {
+                    return;
+                }
+
+                indiceActual = Math.max(0, Math.min(indice, slides.length - 1));
+                pintar();
+            });
+        });
+
+        pintar();
+        carrusel.dataset.inicializado = '1';
     });
 }
 
@@ -158,13 +270,7 @@ function cargarHistorialDesdeStorage() {
 // Este bloque escucha los clicks del menú y decide qué vista mostrar.
 // Se usa delegación de eventos porque los enlaces del navegador se insertan dinámicamente.
 function configurarNavegacionWeb() {
-    const navegadorWeb = document.getElementById('navegadorPaginas');
-
-    if (!navegadorWeb) {
-        return;
-    }
-
-    navegadorWeb.addEventListener('click', (evento) => {
+    document.addEventListener('click', (evento) => {
         const enlace = evento.target.closest('a[data-vista]');
 
         // Si el click no ocurrió sobre un enlace de vista, no hacemos nada.
@@ -172,10 +278,15 @@ function configurarNavegacionWeb() {
             return;
         }
 
+        // Solo interceptamos enlaces internos de esta portada renderizada por templates.
+        const vista = enlace.dataset.vista;
+        if (!vista) {
+            return;
+        }
+
         // Cancelamos la navegación normal para manejar el cambio desde JavaScript.
         evento.preventDefault();
 
-        const vista = enlace.dataset.vista;
         window.location.hash = vista;
         mostrarVista(vista);
         actualizarEnlaceActivo(vista);
@@ -186,6 +297,9 @@ function configurarNavegacionWeb() {
     });
 }
 
+// obtenerVistaDesdeHash: lee window.location.hash, elimina el '#' y devuelve
+// el nombre de la vista si es válida, o 'home' como valor por defecto.
+// Impide que un hash manipulado manualmente provoque errores.
 function obtenerVistaDesdeHash() {
     const vistaHash = window.location.hash.replace('#', '').trim();
     const vistasValidas = new Set(['home', 'guia', 'historial', 'cargarPartida']);
@@ -232,6 +346,8 @@ async function iniciarPantallaWeb() {
         // porque antes de eso los enlaces aún no existen dentro del DOM.
         configurarNavegacionWeb();
         configurarBotonInicioWeb();
+        configurarBotonIrAlJuego();
+        configurarCarruselMonstruosGuia();
 
         const vistaInicial = obtenerVistaDesdeHash();
         mostrarVista(vistaInicial);

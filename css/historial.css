@@ -25,12 +25,13 @@
 
 #historial .historialHeader h1 {
     margin: 0 0 6px;
-    font-family: 'Cinzel', serif;
+    font-family: var(--fuenteTitulo);
     font-size: clamp(1.8rem, 4vw, 2.6rem);
 }
 
 #historial .historialHeader p {
     margin: 0;
+    font-family: var(--fuenteParrafo);
     color: var(--muted);
     line-height: 1.6;
 }
@@ -52,6 +53,7 @@
 
 #historial .historialRegistro p {
     margin: 0;
+    font-family: var(--fuenteParrafo);
     color: var(--muted);
     font-size: 0.97rem;
     line-height: 1.55;
@@ -83,7 +85,7 @@
     color: var(--text);
     padding: 10px 14px;
     font-weight: 700;
-    font-family: 'EB Garamond', serif;
+    font-family: var(--fuenteParrafo);
     cursor: pointer;
     transition: background 0.2s ease;
 }
