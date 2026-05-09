@@ -158,7 +158,8 @@ Definido en `js/personajes.js` mediante la función `crearJugadorInicial()`. Sus
 | `defensa` | 10 | Reducción de daño recibido |
 | `fuerza` | 15 | Bonus extra de daño |
 | `oro` | 50 | Moneda del juego |
-| `nivel` | 1 | Nivel actual (sube al vencer enemigos) |
+| `nivel` | 1 | Nivel actual (sube al acumular suficiente experiencia) |
+| `experiencia` | 0 | XP acumulada; al llegar a `nivel × 100` se sube de nivel |
 | `inventario` | `[]` | Ítems recogidos |
 | `equipado` | `{ arma, escudo }` | Equipo activo que modifica stats |
 
@@ -168,7 +169,16 @@ NPC especial que no combate. Su inventario incluye automáticamente todas las ar
 
 ### Monstruos
 
-Array de objetos en `personajes.monstruos`. Cada monstruo tiene `id`, `nombre`, `salud`, `ataque`, `defensa`, `dialogoIntro`, `equipo` (sus stats de combate), `inventario` (lo que suelta al morir) e `imagen`.
+Array de objetos en `personajes.monstruos`. Cada monstruo tiene `id`, `nombre`, `salud`, `ataque`, `defensa`, `experiencia` (XP que otorga al morir), `dialogoIntro`, `equipo` (sus stats de combate), `inventario` (lo que suelta al morir) e `imagen`.
+
+| Monstruo | XP |
+|---|---|
+| Perro Guardián | 30 |
+| Elfo Mágico | 40 |
+| Demogorgon | 50 |
+| Warlock | 60 |
+| Bestia Warlock | 80 |
+| Lilih (jefe final) | 150 |
 
 ### Equipamiento
 
@@ -207,7 +217,7 @@ Implementado en `js/acciones/combate.js`. Cuando el jugador entra en una sala co
 3. Se muestra el `dialogoIntro` del monstruo y se activa `estadoCombate.activo = true`.
 4. El jugador escribe `atacar` → se calcula el daño: `(ataque_jugador + tirarDado(1,fuerza) - defensa_monstruo)`.
 5. El monstruo contraataca después de un retardo (`RETARDO_TURNO_MONSTRUO_TRAS_ATAQUE_HEROE_MS`): `(ataque_monstruo + tirarDado(1,10) - defensa_jugador)`.
-6. Si el monstruo muere: el jugador gana oro, puede subir de nivel y recibe el inventario del monstruo.
+6. Si el monstruo muere: el jugador gana oro, XP y recibe el inventario del monstruo. Si la XP acumulada supera `nivel × 100`, sube de nivel: gana +5 de fuerza, +5 de ataque y la vida se restaura al 100%.
 7. Si el jugador muere: se reinicia el estado y se redirige a la sala de entrada.
 
 ---

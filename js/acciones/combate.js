@@ -78,6 +78,7 @@ export function crearStatsCombateEnemigo(datosEnemigo) {
     return {
         id: datosEnemigo.id,
         nombre: datosEnemigo.nombre,
+        experiencia: datosEnemigo.experiencia ?? 30,
         vidaBase,
         vidaBonus: bonusEquipo.vida,
         vidaConEquipo,
@@ -206,9 +207,26 @@ function finalizarCombateVictoria() {
     recalcularAtributosPorEquipo();
     const vidaMaximaActual = (jugador.atributosBase?.salud ?? jugador.salud) + (jugador.equipado?.escudo?.vida ?? 0);
     jugador.salud = Math.min(vidaMaximaActual, jugador.salud + curacionVictoria);
-    actualizarAtributosHeroeUI();
     actualizarHistorial('Te fortaleces tras la victoria. Ganas +5 de fuerza y +3 de defensa.');
     actualizarHistorial(`Recuperas ${curacionVictoria} puntos de vida tras la batalla.`);
+
+    // ── Sistema de experiencia y nivel ──
+    const xpGanada = estadoCombate.statsCombate?.experiencia ?? 30;
+    jugador.experiencia += xpGanada;
+    actualizarHistorial(`Ganas ${xpGanada} puntos de experiencia. (XP: ${jugador.experiencia})`);
+    const xpNecesaria = jugador.nivel * 100;
+    if (jugador.experiencia >= xpNecesaria) {
+        jugador.experiencia -= xpNecesaria;
+        jugador.nivel += 1;
+        jugador.atributosBase.fuerza += 5;
+        jugador.atributosBase.ataque = (jugador.atributosBase.ataque ?? jugador.ataque) + 5;
+        recalcularAtributosPorEquipo();
+        const vidaMaximaNivel = (jugador.atributosBase?.salud ?? jugador.salud) + (jugador.equipado?.escudo?.vida ?? 0);
+        jugador.salud = vidaMaximaNivel;
+        actualizarHistorial(`¡HAS SUBIDO AL NIVEL ${jugador.nivel}! +5 de fuerza, +5 de ataque. Vida restaurada al 100%.`);
+    }
+
+    actualizarAtributosHeroeUI();
 
     if (eraJefeFinal) {
         marcarVictoriaFinalDisponible();

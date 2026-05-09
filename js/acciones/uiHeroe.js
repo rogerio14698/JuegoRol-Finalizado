@@ -121,13 +121,16 @@ export function actualizarAtributosHeroeUI() {
 
     // Obtenemos los elementos del DOM.
     const nivelHeroeEl = document.getElementById('nivelHeroe');
+    const xpHeroeEl = document.getElementById('xpHeroe');
     const vidaHeroeEl = document.getElementById('vidaHeroe');
     const ataqueHeroeEl = document.getElementById('ataqueHeroe');
     const fuerzaHeroeEl = document.getElementById('fuerzaHeroe');
     const defensaHeroeEl = document.getElementById('defensaHeroe');
 
     // Actualizamos el contenido de cada elemento si existe.
-    if (nivelHeroeEl) nivelHeroeEl.textContent = `${jugador.nombre} | ${jugador.nivel}`;
+    if (nivelHeroeEl) nivelHeroeEl.textContent = `${jugador.nombre} | Nivel ${jugador.nivel}`;
+    const xpNecesaria = jugador.nivel * 100;
+    if (xpHeroeEl) xpHeroeEl.textContent = `XP: ${jugador.experiencia} / ${xpNecesaria}`;
     if (vidaHeroeEl) {
         // La barra de vida se genera con HTML para poder mostrar la barra visual.
         vidaHeroeEl.innerHTML = renderizarBarraVida(jugador.salud, vidaMaxima, bonusVida);

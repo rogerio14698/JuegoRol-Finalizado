@@ -24,7 +24,7 @@ function crearJugadorInicial() {
     // para que recalcularAtributosPorEquipo siempre parta de ellos.
     const atributosBase = {
         salud: 300,
-        ataque: 40,
+        ataque: 330,
         defensa: 10,
         fuerza: 15,
     };
@@ -88,8 +88,9 @@ export const personajes = {
             id: "demogorgon",
             nombre: "Demogorgon",
             salud: 150,
-            ataque: 20,
+            ataque: 30,
             defensa: 10,
+            experiencia: 110,
             dialogoIntro: "Gruuuh... He olido tu miedo desde el pasillo. Acercate, presa.",
             equipo: [
                 { nombre: "Garra afilada", ataque: 10, defensa: 0, precio: 0 },
@@ -108,6 +109,7 @@ export const personajes = {
             salud: 80,
             ataque: 15,
             defensa: 5,
+            experiencia: 100,
             dialogoIntro: "¡Grrr! Soy el perro guardián de esta sala. Si quieres pasar, tendrás que enfrentarte a mí... o unirte a mí.",
             equipo: [
                 { nombre: "Colmillos afilados", ataque: 8, defensa: 0, precio: 0 },
@@ -123,8 +125,9 @@ export const personajes = {
             id: "warlock",
             nombre: "Warlock",
             salud: 120,
-            ataque: 25,
+            ataque: 33,
             defensa: 15,
+            experiencia: 120,
             dialogoIntro: "Ah, un intrépido aventurero. ¿Buscas poder? Puedo ofrecerte conocimiento... por un precio.",
                 equipo: [
                 { nombre: "Varita mágica", ataque: 12, defensa: 0, precio: 0 },
@@ -141,8 +144,9 @@ export const personajes = {
             id: "bestia-warlock",
             nombre: "Bestia Warlock",
             salud: 200,
-            ataque: 30,
+            ataque: 35,
             defensa: 20,
+            experiencia: 180,
             dialogoIntro: "¡Grrr! Soy la Bestia Warlock, el terror de estas tierras. Si quieres pasar, tendrás que enfrentarte a mí... o unirte a mí.",
                 equipo: [
                 { nombre: "Bastón mágico", ataque: 15, defensa: 0, precio: 0 },
@@ -160,8 +164,9 @@ export const personajes = {
             id: "elfo-magico",
             nombre: "Elfo Mágico",
             salud: 90,
-            ataque: 18,
+            ataque: 40,
             defensa: 8,
+            experiencia: 130,
             dialogoIntro: "Saludos, viajero. Soy un elfo mágico, guardián de los secretos arcanos. Si buscas conocimiento o poder, puedo ayudarte... por un precio.",
             equipo: [
                 { nombre: "Bastón Arcano", ataque: 10, defensa: 0, precio: 0 },
@@ -178,8 +183,9 @@ export const personajes = {
             id: "lilih",
             nombre: "Lilih",
             salud: 200,
-            ataque: 35,
+            ataque: 55,
             defensa: 10,
+            experiencia: 400,
             dialogoIntro: "¡Ah, un intrépido aventurero! Soy Lilith, la reina de las sombras. Si buscas poder, conocimiento o simplemente un desafío digno, has venido al lugar correcto... pero ten cuidado, no todos los que se acercan a mí salen con vida.",
             equipo: [
                 { nombre: "Garras de Lilith", ataque: 20, defensa: 0, precio: 0 },
