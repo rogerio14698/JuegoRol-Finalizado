@@ -1,56 +1,26 @@
 <template id="home">
-    <article class="homeCard">
-        <h1>Desciende la mazmorra impía</h1>
-        <p>Explora pasillos oscuros, enfrenta enemigos y descubre tesoros ocultos en tu camino hacia la gloria.
+    <section class="landingIntro" aria-label="Prologo de la mazmorra">
+        <div class="landingIntroOverlay" id="pantallaNegraLanding">Invocando la mazmorra...</div>
 
-        </p>
-        <div class="actions">
-            <a class="btn primary" href="#cargarPartida" data-vista="cargarPartida">Empezar desafio</a>
-            <a class="btn" href="#guia" data-vista="guia">Ver guia de juego</a>
-        </div>
+        <article class="landingIntroPanel">
+            <section class="landingIntroVideo" aria-label="Secuencia cinematica de entrada">
+                <video id="videoLanding1" class="videoSecuenciaLanding activo" playsinline preload="auto">
+                    <source src="videos/VideoGenerado1.mp4" type="video/mp4">
+                </video>
 
-    </article>
-    <figure class="imgHeroe">
-        <video autoplay muted loop playsinline preload="metadata" poster="img/victoriaHeroe.jpg"
-            aria-label="Secuencia cinematica de la mazmorra">
-            <source src="videos/VideoGenerado1.mp4" type="video/mp4">
-        </video>
-    </figure>
+                <video id="videoLanding2" class="videoSecuenciaLanding" playsinline preload="auto">
+                    <source src="videos/VideoGenerado2.mp4" type="video/mp4">
+                </video>
 
-    <section class="sobreJuego">
-         <article class="homeCard">
-            <h2>Recorrido Narrativo</h2>
-            <p>
-                Desde la Entrada hasta el Trono Impio en una progresion lineal con desvíos
-                clave para encontrar oro, enemigos y comprar en la tienda. Cada sala tiene su propia historia y desafios, creando una experiencia
-                inmersiva y emocionante.
-            </p>
+                <div class="veloTransicionLanding" id="veloTransicionLanding" aria-hidden="true"></div>
+            </section>
+
+            <p id="avisoAudioLanding" class="avisoAudioLanding" aria-live="polite"></p>
+
+            <div class="controlesLanding">
+                <button type="button" class="boton controlAudioLanding" id="btnAudioLanding" aria-pressed="false">Silenciar</button>
+                <button type="button" class="boton irJuegoLanding" id="btnInicio">Ir al juego</button>
+            </div>
         </article>
-
-        <article class="homeCard">
-            <h2>Ambientacion Imersiva</h2>
-            <p>
-                Estetica Dark Fantasy inspirada en Dragones y Mazmorras, con un toque de misterio y peligro. 
-                Cada sala esta diseñada para sumergirte en un mundo de sombras, criaturas siniestras y tesoros ocultos.
-            </p>
-        </article>
-
-        <article class="homeCard">
-            <h2>Juego Integrado DIW y DWEC</h2>
-            <p>
-                Esta landing presenta la experiencia y su mundo. El sistema jugable y su
-                logica en JavaScript ya estan preparados para ser lanzados.
-
-                <br>
-                Juega con imaginación y creatividad,
-                usando el sistema de movimiento, exploracion y combate para vivir tu propia aventura en la mazmorra impia.
-            </p>
-        </article>
-    </section>
-    <section class="cinematic" aria-label="Vista previa del desafio">
-        <video autoplay muted loop playsinline preload="metadata" poster="img/referencia4.jpeg">
-            <source src="videos/VideoGenerado2.mp4" type="video/mp4">
-        </video>
-        <p>Los rituales y los pasillos ya se mueven en pantalla antes de entrar al juego.</p>
     </section>
 </template>

@@ -7,7 +7,7 @@
 
 // Importamos todas las funciones que configuran los botones y acciones del juego.
 // Cada función viene de su propio módulo dentro de js/acciones/.
-import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, configurarBotonMapa, configurarBotonPocion, configurarBotonAbandonar, mostrarSala, configurarBotonMenu } from './js/acciones.js';
+import { configurarMovimientoPorComando, configurarBotonBuscar, configurarBotonComprar, configurarBotonMapa, configurarBotonPocion, configurarBotonAbandonar, mostrarSala, configurarBotonMenu, configurarBotonComandos } from './js/acciones.js';
 
 // Esta función inyecta plantillas HTML externas dentro de contenedores del DOM.
 import { renderizarTemplate } from './js/cargarTemplates.js';
@@ -85,6 +85,7 @@ async function iniciarPantalla() {
         configurarBotonPocion();          // Botón "Pocion" → usa una poción del inventario.
         configurarBotonAbandonar();       // Botón "Abandonar cueva" → reinicia y vuelve al inicio.
         configurarBotonMenu();            // Botón "Menu" → abre el panel de inventario y estadísticas.
+        configurarBotonComandos();        // Botón "Comandos" → abre un panel de ayuda con comandos jugables.
 
         // 7. Intentamos cargar Anime.js desde CDN para tener animaciones de combate.
         //    Si falla (sin internet), el juego funciona igual pero sin animaciones.

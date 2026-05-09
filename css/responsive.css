@@ -158,7 +158,8 @@
     }
 
     .panelMapa,
-    .panelMenu {
+    .panelMenu,
+    .panelComandos {
         inset: 0.55rem;
     }
 

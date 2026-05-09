@@ -31,5 +31,8 @@ export { mostrarSala } from './acciones/sala.js';
 // Botón Menú: abre el panel con el inventario y las estadísticas detalladas del héroe.
 export { configurarBotonMenu } from './acciones/menu.js';
 
+// Botón Comandos: abre un panel modal con ayuda de comandos disponibles.
+export { configurarBotonComandos } from './acciones/comandosPanel.js';
+
 // procesarDropTrasVictoria: lanza la lógica de loot (botín) cuando el jugador gana un combate.
 export { procesarDropTrasVictoria } from './acciones/drop.js';

@@ -15,6 +15,8 @@
 // de clicks. Nunca hay navegación por rutas físicas entre las secciones de la portada.
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { inicializarLandingVideos, actualizarEstadoLandingVideos } from './js/landingVideos.js';
+
 // Rutas de los templates que se usarán dentro de index.html.
 // Cada bloque visual tiene su propio archivo para mantener el HTML principal más limpio.
 const rutaTemplateNavegador = 'template/navegadorExterno.html';
@@ -86,6 +88,7 @@ function mostrarVista(vista) {
         guia.hidden = true;
         historial.hidden = true;
         cargarPartida.hidden = true;
+        actualizarEstadoLandingVideos('home');
         return;
     }
 
@@ -95,6 +98,7 @@ function mostrarVista(vista) {
         guia.hidden = false;
         historial.hidden = true;
         cargarPartida.hidden = true;
+        actualizarEstadoLandingVideos('guia');
         return;
     }
     if (vista === 'historial') {
@@ -102,6 +106,7 @@ function mostrarVista(vista) {
         guia.hidden = true;
         historial.hidden = false;
         cargarPartida.hidden = true;
+        actualizarEstadoLandingVideos('historial');
         return;
     }
     if (vista === 'cargarPartida') {
@@ -109,6 +114,7 @@ function mostrarVista(vista) {
         guia.hidden = true;
         historial.hidden = true;
         cargarPartida.hidden = false;
+        actualizarEstadoLandingVideos('cargarPartida');
         return;
     }
 }
@@ -329,6 +335,7 @@ async function iniciarPantallaWeb() {
 
         if (homeTemplate) {
             await cargarTemplatesWeb('home', rutaTemplateHome);
+            inicializarLandingVideos();
         }
 
         // El tutorial también se carga al inicio, pero se mantiene oculto hasta que el usuario lo pida.
