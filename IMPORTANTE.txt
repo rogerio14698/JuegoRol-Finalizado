@@ -1,0 +1,1 @@
+El juego necesita el servidor de local, ya que el JS se carga por módulos y tiene fetch.
