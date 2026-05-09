@@ -188,25 +188,68 @@
     background: var(--guia-panel);
     border: 1px solid var(--guia-line);
     border-radius: 5px;
-    padding: 20px;
+    padding: 30px;
+}
+
+#guia .commands > * {
+    margin-bottom: 20px;
+}
+
+#guia .commands > *:last-child {
+    margin-bottom: 0;
 }
 
 #guia .commands h2 {
-    margin: 0 0 10px;
+    margin: 30px 0 16px 0;
     font-family: 'Cinzel', serif;
+    font-size: 1.3em;
+    color: var(--guia-title, #fff);
+    border-bottom: 2px solid var(--guia-line);
+    padding-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#guia .commands h2:first-child {
+    margin-top: 0;
+}
+
+#guia .commands p {
+    margin: 0 0 14px 0;
+    line-height: 1.6;
+    color: var(--guia-text);
+}
+
+#guia .commands p code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
 }
 
 #guia .commands ul {
-    margin: 0;
-    padding-left: 18px;
+    margin: 12px 0 0 0;
+    padding-left: 22px;
     color: var(--guia-muted);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 12px;
 }
 
 #guia .commands li {
-    line-height: 1.5;
+    line-height: 1.7;
+    margin-bottom: 6px;
+}
+
+#guia .commands li code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffd700;
+    padding: 3px 7px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
 }
 
 @media (max-width: 900px) {
@@ -214,7 +257,17 @@
         grid-template-columns: 1fr;
     }
 
+    #guia .commands {
+        padding: 20px;
+    }
+
+    #guia .commands h2 {
+        margin: 24px 0 12px 0;
+        font-size: 1.1em;
+    }
+
     #guia .commands ul {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 }
